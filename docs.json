@@ -1,0 +1,108 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Panta API",
+  "description": "Public API for Panta USDC prediction markets on Solana. Quote, build unsigned transactions, and attribute trades — without holding user keys.",
+  "colors": {
+    "primary": "#0A0A0A",
+    "light": "#3F3F46",
+    "dark": "#FAFAFA"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "panta.market",
+        "href": "https://panta.market"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "website": "https://panta.market"
+    }
+  },
+  "api": {
+    "mdx": {
+      "server": "https://api.panta.market/api/v1",
+      "auth": {
+        "method": "key",
+        "name": "X-Api-Key"
+      }
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": ["index", "quickstart", "guides/how-it-works"]
+          },
+          {
+            "group": "Platform",
+            "pages": ["guides/authentication", "guides/errors"]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "groups": [
+          {
+            "group": "Account",
+            "pages": [
+              "api-reference/account/get",
+              "api-reference/account/update",
+              "api-reference/account/dashboard",
+              "api-reference/account/metrics",
+              "api-reference/account/list-keys",
+              "api-reference/account/create-key",
+              "api-reference/account/revoke-key"
+            ]
+          },
+          {
+            "group": "Create market",
+            "pages": [
+              "api-reference/markets/overview",
+              "api-reference/markets/quote",
+              "api-reference/markets/build",
+              "api-reference/markets/register"
+            ]
+          },
+          {
+            "group": "Primary buy",
+            "pages": [
+              "api-reference/orders/overview",
+              "api-reference/orders/quote",
+              "api-reference/orders/build",
+              "api-reference/orders/submit",
+              "api-reference/orders/verify"
+            ]
+          },
+          {
+            "group": "Positions and claims",
+            "pages": [
+              "api-reference/positions",
+              "api-reference/claims/build"
+            ]
+          },
+          {
+            "group": "Trades",
+            "pages": [
+              "api-reference/trades/report",
+              "api-reference/trades/status"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
+  }
+}

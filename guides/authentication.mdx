@@ -1,0 +1,53 @@
+---
+title: Authentication
+description: API keys, environments, headers, and create-market permission.
+---
+
+All routes under `/api/v1/` require an API key, except consumer JWT issuance under `/api/v1/auth/` (not part of this public surface).
+
+## Header
+
+Send the secret in `X-Api-Key`. Keys in query parameters are rejected with `401` and `{ "code": "UNAUTHORIZED" }`.
+
+```bash
+curl https://api.panta.market/api/v1/account/ \
+  -H "X-Api-Key: pk_test_…"
+```
+
+| Header | Required | Description |
+| --- | --- | --- |
+| `X-Api-Key` | Yes | `pk_test_…` or `pk_live_…` |
+| `Content-Type` | On POST/PATCH | `application/json` |
+| `X-Request-Id` | No | Correlation id; echoed when valid |
+| `X-User-Id` | No | Optional attribution id; defaults to the authenticated account |
+
+## Environments
+
+| Prefix | Accepted when |
+| --- | --- |
+| `pk_test_` | Server `API_KEY_ENV` is `test` |
+| `pk_live_` | Server `API_KEY_ENV` is `live` |
+
+A mismatched prefix is the same `401 UNAUTHORIZED` as a bad key. The API does not tell you which check failed.
+
+## Key lifecycle
+
+Create, list, and revoke keys via the [Account](/api-reference/account/list-keys) resource. The plaintext `secret` appears **only** on create.
+
+## Create-market permission
+
+`POST /markets/create/*` requires `canCreateMarkets: true` on the account. Otherwise:
+
+```json
+{ "code": "CREATE_NOT_PERMITTED" }
+```
+
+Permission is granted by Panta; it is not self-service.
+
+## Do not send
+
+| Content | Why |
+| --- | --- |
+| Wallet private keys / seed phrases | Signing is client-side |
+| API keys in URLs | Rejected |
+| Oracle feed identifiers | Derived server-side from resolution metadata |

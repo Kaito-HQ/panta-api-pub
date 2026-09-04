@@ -1,0 +1,58 @@
+---
+title: List positions
+description: USDC market holdings for a wallet — shares, phase, and claim eligibility.
+api: GET /positions/
+---
+
+Indexer balances may lag the chain briefly after a purchase. Result sets are capped (typically 200 rows). When `claimable` is `true`, use [Build claim](/api-reference/claims/build).
+
+<ParamField query="wallet" type="string" required>
+  Base58 Solana public key.
+</ParamField>
+
+<ResponseField name="wallet" type="string">
+  Echo of the requested wallet.
+</ResponseField>
+<ResponseField name="positions" type="array">
+  Holdings. Empty array when none.
+</ResponseField>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `marketId` | string | Event / market address |
+| `category` | string \| null | From the catalog when available |
+| `side` | string | `yes` or `no` |
+| `shares` | string | Human-readable share quantity |
+| `phase` | string | `primary` \| `secondary` \| `resolved` \| `cancelled` |
+| `claimable` | boolean | Claim construction is allowed for this side |
+| `claimed` | boolean | A claim account already exists |
+| `outcome` | string \| null | `yes` / `no` after resolution; otherwise `null` |
+
+Errors: `INVALID_MARKET_PARAMS` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl "https://api.panta.market/api/v1/positions/?wallet=Buyer111111111111111111111111111111111" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "wallet": "…",
+  "positions": [
+    {
+      "marketId": "…",
+      "category": "crypto",
+      "side": "yes",
+      "shares": "38.40",
+      "phase": "primary",
+      "claimable": false,
+      "claimed": false,
+      "outcome": null
+    }
+  ]
+}
+```
+</ResponseExample>

@@ -1,0 +1,53 @@
+---
+title: Trade status
+description: Attribution or confirmation status for a signature.
+api: GET /trades/{signature}/
+---
+
+Responses do not expose another account’s private attribution fields.
+
+<ParamField path="signature" type="string" required>
+  Solana transaction signature.
+</ParamField>
+<ParamField query="userId" type="string">
+  Scopes visibility when set.
+</ParamField>
+
+| `status` | Meaning |
+| --- | --- |
+| `processed` | Attribution stored |
+| `pending_attribution` | Seen on-chain, not yet attributed |
+| `unknown` | Not found or not visible under the requested scope |
+| `failed` | Confirmation or validation failed |
+
+<RequestExample>
+```bash cURL
+curl https://api.panta.market/api/v1/trades/5VEJv1R…/ \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Attributed
+{
+  "signature": "…",
+  "status": "processed",
+  "marketId": "…",
+  "wallet": "…"
+}
+```
+
+```json Pending
+{
+  "signature": "…",
+  "status": "pending_attribution"
+}
+```
+
+```json Unknown
+{
+  "signature": "…",
+  "status": "unknown"
+}
+```
+</ResponseExample>

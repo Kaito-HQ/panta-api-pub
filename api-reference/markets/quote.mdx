@@ -1,0 +1,126 @@
+---
+title: Quote a market
+description: Validate parameters, check the market image URL, reserve a create session, and return the USDC creation fee.
+api: POST /markets/create/quote/
+---
+
+Fee amounts are USDC **base units** (integer strings, 6 decimals). `paymentUsdc` in the request is ignored; the fee comes from on-chain config.
+
+## Market image
+
+`imageUrl` is required. Host the file yourself (S3, GCS, R2, Cloudinary, …) with public HTTPS read. The API fetches it at quote time.
+
+| Rule | Value |
+| --- | --- |
+| Count | Exactly one URL (string, not an array) |
+| Dimensions | Exactly **1024×1024** |
+| Formats | JPG / JPEG, PNG, GIF, or WebP |
+| Max size | 5 MB |
+| Protocol | Publicly reachable `https` (or `http`) |
+
+Do not pass data URLs, short-lived signed URLs, or private buckets.
+
+<ParamField body="wallet" type="string" required>
+  Fee payer and transaction signer (base58).
+</ParamField>
+<ParamField body="question" type="string" required>
+  Market question (max 512). Combined with `wallet` to derive the event address.
+</ParamField>
+<ParamField body="resolutionRule" type="string" required>
+  Resolution criteria (max 2048).
+</ParamField>
+<ParamField body="sourcesOfTruth" type="string[]" required>
+  Non-empty list (max 20).
+</ParamField>
+<ParamField body="category" type="string" required>
+  One of `sports`, `crypto`, `politics`, `entertainment`, `finance`, `science`, `world`, `other`.
+</ParamField>
+<ParamField body="startTime" type="integer" required>
+  Unix seconds. Must satisfy `startTime < endTime ≤ resolutionTime`.
+</ParamField>
+<ParamField body="endTime" type="integer" required>
+  Unix seconds.
+</ParamField>
+<ParamField body="resolutionTime" type="integer" required>
+  Unix seconds.
+</ParamField>
+<ParamField body="imageUrl" type="string" required>
+  Public URL of a 1024×1024 JPG/PNG/GIF/WebP (≤5 MB). Catalog only.
+</ParamField>
+<ParamField body="marketType" type="string">
+  `standard` (default) or `breaking`.
+</ParamField>
+<ParamField body="eventInProgress" type="boolean">
+  Allowed only when `marketType` is `breaking`.
+</ParamField>
+<ParamField body="title" type="string">
+  Defaults to `question`.
+</ParamField>
+<ParamField body="description" type="string">
+  Catalog description.
+</ParamField>
+<ParamField body="region" type="string">
+  Defaults to `Global`.
+</ParamField>
+<ParamField body="oracle" type="string">
+  Defaults to `sourcesOfTruth` joined by `,`.
+</ParamField>
+
+<ResponseField name="createId" type="string">
+  Session id for build and register.
+</ResponseField>
+<ResponseField name="expectedEventPda" type="string">
+  Expected on-chain event address.
+</ResponseField>
+<ResponseField name="paymentUsdc" type="string">
+  Total creation fee (base units).
+</ResponseField>
+<ResponseField name="liquidityInjectionUsdc" type="string">
+  Liquidity portion of the fee.
+</ResponseField>
+<ResponseField name="platformRevenueUsdc" type="string">
+  Platform portion of the fee.
+</ResponseField>
+<ResponseField name="expiresAt" type="string">
+  Session expiry (ISO-8601).
+</ResponseField>
+
+Errors: `INVALID_MARKET_PARAMS` · `DUPLICATE_MARKET` · `CREATE_NOT_PERMITTED` · `UNAUTHORIZED` · `RATE_LIMITED`. A bad `imageUrl` is HTTP `400` with field errors.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.panta.market/api/v1/markets/create/quote/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Creator1111111111111111111111111111111",
+    "question": "Will ETH be above $5,000 on 2027-01-01?",
+    "resolutionRule": "CoinGecko daily close UTC",
+    "sourcesOfTruth": ["https://www.coingecko.com"],
+    "category": "crypto",
+    "startTime": 1893456000,
+    "endTime": 1896127200,
+    "resolutionTime": 1896130800,
+    "marketType": "standard",
+    "title": "ETH above 5k?",
+    "description": "Resolves from CoinGecko.",
+    "imageUrl": "https://cdn.example.com/markets/eth-5k-1024.webp",
+    "region": "Global"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "createId": "cr_…",
+  "expectedEventPda": "…",
+  "paymentUsdc": "50000000",
+  "liquidityInjectionUsdc": "10000000",
+  "platformRevenueUsdc": "40000000",
+  "marketType": "standard",
+  "expiresAt": "2026-09-04T16:30:00.000000Z",
+  "blockhashExpiryHintSec": 60
+}
+```
+</ResponseExample>

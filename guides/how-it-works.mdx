@@ -1,0 +1,70 @@
+---
+title: How it works
+description: Quote, build an unsigned transaction, sign in the wallet, broadcast on your RPC, then confirm with Panta.
+---
+
+Panta never holds private keys. Every write that touches Solana is a **session**:
+
+1. **Quote** — validate inputs, lock a short-lived intent, return price.
+2. **Build** — return an unsigned `VersionedTransaction` or instruction list plus a recent blockhash.
+3. **Sign + broadcast** — your app asks the user’s wallet to sign, then you send the tx on **your** RPC.
+4. **Confirm** — send Panta the signature so we can verify on-chain and update catalog / attribution.
+
+## Create market
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant App as Your app
+  participant API as Panta API
+  participant Chain as Solana
+
+  User->>App: Question, rule, times, image URL
+  App->>API: POST /markets/create/quote/
+  API-->>App: createId, paymentUsdc, expectedEventPda
+  App->>API: POST /markets/create/build/
+  API-->>App: base64 unsigned VersionedTransaction
+  App->>User: Wallet approve
+  User-->>App: Signed tx
+  App->>Chain: sendRawTransaction
+  Chain-->>App: signature
+  App->>API: POST /markets/register/
+  API-->>App: marketId, status registered
+```
+
+Sessions (`createId`) last about **5 minutes**. Rebuild if the blockhash expires (~60s). Do not edit accounts or fee amounts; register checks the chain against the quote.
+
+Creating a market also requires a public **1024×1024** image URL. See [Quote a market](/api-reference/markets/quote).
+
+## Primary buy
+
+Same pattern, different ids:
+
+| Step | Id |
+| --- | --- |
+| Quote | `quoteId` (~90s) |
+| Build | `orderId` (~120s) |
+| After broadcast | submit and/or verify with `signature` |
+
+Primary buy **build** returns **instructions** (not a fully assembled tx). Compile a versioned transaction from `instructions` + `recentBlockhash`, then sign.
+
+If the curve moved more than `maxSlippageBps` between quote and build, you get `QUOTE_STALE` — requote.
+
+## What Panta verifies
+
+On register / trade report, verification is fail-closed: the transaction must exist, succeed, include the expected wallet, market, and program, and match quoted fees where applicable.
+
+| Code | Meaning |
+| --- | --- |
+| `TX_NOT_FOUND` | Signature not seen at the required commitment |
+| `TX_FAILED` | On-chain error |
+| `TX_MISMATCH` | Wrong wallet, market, or program |
+| `TX_FEE_MISMATCH` | Amount does not match the quote |
+
+## Safe retries
+
+| Call | Idempotent when |
+| --- | --- |
+| `POST /markets/register/` | Same `createId` + `signature` |
+| `POST /trades/` | Same `signature` |
+| `POST /primaryordersubmit/` | Same `orderId` + `signature` |

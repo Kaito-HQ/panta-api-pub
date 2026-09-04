@@ -1,0 +1,46 @@
+---
+title: Dashboard
+description: Aggregated account, key counts, and usage counters.
+api: GET /account/dashboard/
+---
+
+<ResponseField name="account" type="object">
+  Same shape as [Get account](/api-reference/account/get).
+</ResponseField>
+<ResponseField name="keys" type="object">
+  `active`, `revoked`, and `total` key counts.
+</ResponseField>
+<ResponseField name="metrics" type="object">
+  Create and trade totals for this account.
+</ResponseField>
+<ResponseField name="permissions" type="object">
+  Includes `canCreateMarkets`.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl https://api.panta.market/api/v1/account/dashboard/ \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "account": {
+    "userId": "usr_…",
+    "name": "Acme",
+    "status": "active",
+    "canCreateMarkets": false,
+    "createdAt": "2026-09-04T12:00:00.000000Z",
+    "apiKeyId": "key_…"
+  },
+  "keys": { "active": 1, "revoked": 0, "total": 1 },
+  "metrics": {
+    "creates": { "total": 0, "byStatus": {} },
+    "trades": { "total": 0, "volumeUsdcBase": 0, "byKind": {} }
+  },
+  "permissions": { "canCreateMarkets": false }
+}
+```
+</ResponseExample>

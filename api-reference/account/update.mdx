@@ -1,0 +1,33 @@
+---
+title: Update account
+description: Update the display name on the authenticated account.
+api: PATCH /account/
+---
+
+<ParamField body="name" type="string" required>
+  Non-empty display name (max 255).
+</ParamField>
+
+Response schema matches [Get account](/api-reference/account/get).
+
+<RequestExample>
+```bash cURL
+curl -X PATCH https://api.panta.market/api/v1/account/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Acme Labs"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "userId": "usr_…",
+  "name": "Acme Labs",
+  "status": "active",
+  "canCreateMarkets": false,
+  "createdAt": "2026-09-04T12:00:00.000000Z",
+  "apiKeyId": "key_…"
+}
+```
+</ResponseExample>

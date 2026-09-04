@@ -1,0 +1,63 @@
+---
+title: Quickstart
+description: Get an API key and call whoami, then follow a create or buy flow.
+---
+
+## 1. Get an API key
+
+An operator creates your account in Panta and issues a secret. Keys look like:
+
+```
+pk_test_…   test environment
+pk_live_…   live environment
+```
+
+The plaintext secret is shown **once** (create response or admin issuance). Store it in your backend. Never put it in a query string, mobile binary, or frontend bundle.
+
+After that, you can [list, create, and revoke keys](/api-reference/account/list-keys) yourself.
+
+## 2. Call the API
+
+Every request under `/api/v1/` needs the header `X-Api-Key`. Trailing slashes are required.
+
+```bash
+curl -sS https://api.panta.market/api/v1/account/ \
+  -H "X-Api-Key: pk_test_…"
+```
+
+A successful response looks like:
+
+```json
+{
+  "userId": "usr_…",
+  "name": "Acme",
+  "status": "active",
+  "canCreateMarkets": false,
+  "createdAt": "2026-09-04T12:00:00.000000Z",
+  "apiKeyId": "key_…"
+}
+```
+
+`GET /whoami/` is an alias of `GET /account/`.
+
+<Warning>
+`POST /markets/create/*` requires `canCreateMarkets: true`. That flag is granted by Panta, not self-service.
+</Warning>
+
+## 3. Pick a flow
+
+<Steps>
+  <Step title="Create a market">
+    [Quote](/api-reference/markets/quote) → [build](/api-reference/markets/build) → wallet signs → you broadcast → [register](/api-reference/markets/register).
+  </Step>
+  <Step title="Buy primary shares">
+    [Quote](/api-reference/orders/quote) → [build](/api-reference/orders/build) → compile + sign → broadcast → [submit](/api-reference/orders/submit) / [verify](/api-reference/orders/verify).
+  </Step>
+  <Step title="Read and claim">
+    [Positions](/api-reference/positions) for a wallet. When `claimable` is true, [build a claim](/api-reference/claims/build).
+  </Step>
+</Steps>
+
+## 4. Handle errors
+
+Failures return `{ "code": "…" }`. Switch on `code`, not only HTTP status. See [Errors](/guides/errors).

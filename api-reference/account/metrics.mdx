@@ -1,0 +1,40 @@
+---
+title: Metrics
+description: Summary plus recent create and trade rows for the account.
+api: GET /account/metrics/
+---
+
+<ParamField query="limit" type="integer" default="50">
+  Max recent rows per list (capped at `200`).
+</ParamField>
+
+<ResponseField name="summary" type="object">
+  Create, trade, and key aggregates.
+</ResponseField>
+<ResponseField name="creates" type="array">
+  Recent create rows: `createId`, `wallet`, `eventPda`, `signature`, `status`, `paymentUsdc`, `createdAt`, `updatedAt`.
+</ResponseField>
+<ResponseField name="trades" type="array">
+  Recent trade rows: `signature`, `wallet`, `marketId`, `side`, `kind`, `amountUsdc`, `status`, `createdAt`.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl "https://api.panta.market/api/v1/account/metrics/?limit=50" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "summary": {
+    "creates": { "total": 0, "byStatus": {} },
+    "trades": { "total": 0, "volumeUsdcBase": 0, "byKind": {} },
+    "keys": { "active": 1, "revoked": 0, "total": 1 }
+  },
+  "creates": [],
+  "trades": []
+}
+```
+</ResponseExample>

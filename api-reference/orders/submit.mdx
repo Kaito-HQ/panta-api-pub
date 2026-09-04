@@ -1,0 +1,44 @@
+---
+title: Submit primary buy
+description: Register the broadcast signature for asynchronous confirmation. Does not wait for finalization.
+api: POST /primaryordersubmit/
+---
+
+Repeating the same `orderId` and `signature` is safe to retry.
+
+<ParamField body="orderId" type="string" required>
+  From build.
+</ParamField>
+<ParamField body="signature" type="string" required>
+  Broadcast transaction signature.
+</ParamField>
+<ParamField body="wallet" type="string">
+  If set, must match the order wallet.
+</ParamField>
+
+<ResponseField name="status" type="string">
+  `submitted` when the signature is registered.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.panta.market/api/v1/primaryordersubmit/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "ord_abc123",
+    "signature": "5VEJv1R…base58Signature",
+    "wallet": "Buyer111111111111111111111111111111111"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "orderId": "ord_…",
+  "status": "submitted",
+  "signature": "…"
+}
+```
+</ResponseExample>

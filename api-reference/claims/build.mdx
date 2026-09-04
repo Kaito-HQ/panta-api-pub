@@ -1,0 +1,74 @@
+---
+title: Build claim
+description: Unsigned claim instructions for a resolved market when the wallet holds winning shares.
+api: POST /claim/build/
+---
+
+Use [List positions](/api-reference/positions) to check `claimable` first. This endpoint re-validates eligibility on-chain and fails closed if preconditions are not met.
+
+Compile a versioned transaction from `instructions` and `recentBlockhash`, sign with `wallet`, then broadcast.
+
+<ParamField body="wallet" type="string" required>
+  Claimant and transaction signer.
+</ParamField>
+<ParamField body="marketId" type="string" required>
+  Event / market address.
+</ParamField>
+
+<ResponseField name="outcome" type="string">
+  Winning outcome label.
+</ResponseField>
+<ResponseField name="winningShares" type="string">
+  Shares eligible to claim.
+</ResponseField>
+<ResponseField name="instructions" type="array">
+  Ordered Solana instructions.
+</ResponseField>
+<ResponseField name="derived" type="object">
+  Relevant accounts (`winClaim`, `positionPda`, `vaultAuthority`).
+</ResponseField>
+
+| Code | Description |
+| --- | --- |
+| `MARKET_NOT_FOUND` | Market account missing or undecodable |
+| `NOT_CLAIMABLE` | One or more claim preconditions failed |
+| `INVALID_MARKET_PARAMS` | Invalid `wallet` or `marketId`, or configuration failure |
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.panta.market/api/v1/claim/build/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Buyer111111111111111111111111111111111",
+    "marketId": "EventPda11111111111111111111111111111"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "wallet": "…",
+  "marketId": "…",
+  "outcome": "YES",
+  "winningShares": "38",
+  "instructions": [
+    {
+      "programId": "…",
+      "data": "<base64>",
+      "accounts": [
+        { "pubkey": "…", "isSigner": true, "isWritable": true }
+      ]
+    }
+  ],
+  "derived": {
+    "winClaim": "…",
+    "positionPda": "…",
+    "vaultAuthority": "…"
+  },
+  "recentBlockhash": "…",
+  "lastValidBlockHeight": 123
+}
+```
+</ResponseExample>

@@ -1,0 +1,31 @@
+---
+title: Create market
+description: Quote the USDC fee, build an unsigned transaction, then register after the wallet broadcasts.
+---
+
+Creates a USDC prediction market. Fee quotation, unsigned transaction construction, and post-broadcast registration are separate steps.
+
+<Warning>
+Requires `canCreateMarkets: true` on the account. Otherwise the API returns `{ "code": "CREATE_NOT_PERMITTED" }`.
+</Warning>
+
+<Steps>
+  <Step title="Quote">
+    [`POST /markets/create/quote/`](/api-reference/markets/quote) — validate params, check `imageUrl`, reserve a session, return the creation fee.
+  </Step>
+  <Step title="Build">
+    [`POST /markets/create/build/`](/api-reference/markets/build) — unsigned `VersionedTransaction` plus blockhash.
+  </Step>
+  <Step title="Sign and broadcast">
+    Decode `transaction`, sign with `wallet`, send on your RPC. Panta does not broadcast.
+  </Step>
+  <Step title="Register">
+    [`POST /markets/register/`](/api-reference/markets/register) — verify the on-chain create and write catalog / oracle metadata.
+  </Step>
+</Steps>
+
+Sessions last about 5 minutes. Rebuild if the blockhash expires (~60s). Do not change instruction accounts or fee amounts.
+
+<Info>
+Every quote needs a public **1024×1024** image URL (`imageUrl`). Catalog-only — it is not written on-chain. Details on the [quote](/api-reference/markets/quote) page.
+</Info>

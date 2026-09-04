@@ -1,0 +1,44 @@
+---
+title: List API keys
+description: List API keys for the authenticated account. Secrets are never included.
+api: GET /account/keys/
+---
+
+<ResponseField name="keys" type="array">
+  Key metadata. Each item has `id`, `name`, `prefix`, `env`, `status`, `createdAt`, `revokedAt`.
+</ResponseField>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Key identifier (`key_…`) |
+| `name` | string | Optional label |
+| `prefix` | string | First characters of the secret (for recognition) |
+| `env` | string | `test` or `live` |
+| `status` | string | `active` or `revoked` |
+| `createdAt` | string | ISO-8601 |
+| `revokedAt` | string \| null | ISO-8601 when revoked |
+
+<RequestExample>
+```bash cURL
+curl https://api.panta.market/api/v1/account/keys/ \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "keys": [
+    {
+      "id": "key_…",
+      "name": "ci",
+      "prefix": "pk_test_xxxx",
+      "env": "test",
+      "status": "active",
+      "createdAt": "2026-09-04T12:00:00.000000Z",
+      "revokedAt": null
+    }
+  ]
+}
+```
+</ResponseExample>

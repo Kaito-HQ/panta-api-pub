@@ -1,0 +1,32 @@
+---
+title: Revoke API key
+description: Revoke a key by id. Idempotent if the key is already revoked.
+api: POST /account/keys/{id}/revoke/
+---
+
+<ParamField path="id" type="string" required>
+  Key identifier (`key_…`).
+</ParamField>
+
+Request body is empty.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.panta.market/api/v1/account/keys/key_abc/revoke/ \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "id": "key_abc",
+  "name": "ci",
+  "prefix": "pk_test_xxxx",
+  "env": "test",
+  "status": "revoked",
+  "createdAt": "2026-09-04T12:00:00.000000Z",
+  "revokedAt": "2026-09-04T13:00:00.000000Z"
+}
+```
+</ResponseExample>
