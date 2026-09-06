@@ -6,10 +6,24 @@ description: Error envelope, codes, rate limits, and retry rules.
 Failed requests return JSON:
 
 ```json
-{ "code": "INVALID_MARKET_PARAMS" }
+{
+  "code": "INVALID_MARKET_PARAMS",
+  "message": "startTime must be at least 3600s ahead of now",
+  "field": "startTime"
+}
 ```
 
-Switch on `code`. HTTP status is the class of failure, not a replacement for `code`.
+Or, for serializer field errors:
+
+```json
+{
+  "code": "INVALID_MARKET_PARAMS",
+  "message": "imageUrl: This field is required.",
+  "fields": { "imageUrl": ["This field is required."] }
+}
+```
+
+Switch on `code`. Use `message` / `field` / `fields` to show what failed. HTTP status is the class of failure, not a replacement for `code`.
 
 ## HTTP status
 
@@ -19,6 +33,7 @@ Switch on `code`. HTTP status is the class of failure, not a replacement for `co
 | `401` | Missing or invalid credentials, or wallet binding failure |
 | `403` | Authenticated but not permitted |
 | `404` | Referenced transaction or market not found |
+| `409` | Conflict (email already registered) |
 | `413` | Request body exceeds the size limit |
 | `429` | Rate limit exceeded |
 | `500` | Internal error (`INTERNAL_ERROR` when applicable) |
@@ -27,8 +42,9 @@ Switch on `code`. HTTP status is the class of failure, not a replacement for `co
 
 | Code | Typical endpoints | Description |
 | --- | --- | --- |
-| `UNAUTHORIZED` | Any | Invalid or missing API key; or wallet does not match the bound session |
-| `CREATE_NOT_PERMITTED` | Create market | Account lacks create permission |
+| `UNAUTHORIZED` | Any authenticated route | Invalid or missing API key or signup JWT; or wallet does not match the bound session |
+| `EMAIL_TAKEN` | `POST /auth/register/` | Email already registered |
+| `CREATE_NOT_PERMITTED` | Create market | Account has create permission disabled |
 | `FORBIDDEN` | Restricted routes | Operation not allowed |
 | `INVALID_MARKET_PARAMS` | Most writes | Malformed fields, invalid pubkeys, illegal times, or unavailable config |
 | `DUPLICATE_MARKET` | Create quote | Creator + question already produce a market |
@@ -45,8 +61,6 @@ Switch on `code`. HTTP status is the class of failure, not a replacement for `co
 | `TX_FEE_MISMATCH` | Register, trades | On-chain amount does not match quoted fee or size |
 | `RATE_LIMITED` | Any | Client exceeded the rate limit |
 | `INTERNAL_ERROR` | Any | Unexpected server failure |
-
-Some validation failures (for example a bad `imageUrl`) return HTTP `400` with field errors instead of a single `code`.
 
 ## Rate limits
 
@@ -67,7 +81,7 @@ Defaults per account (and optionally per IP). Deployments may override.
 | `positions` | `GET /positions/` | 60 / 60s |
 | `quote` | Create / primary quote | 30 / 60s |
 | `build` | Create / primary / claim build | 20 / 60s |
-| `register` | Register, trade report, submit | 40 / 60s |
+| `register` | Register, trade report, submit, auth | 40 / 60s |
 
 On `429`, honor `Retry-After` and back off with jitter.
 

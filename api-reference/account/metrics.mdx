@@ -4,6 +4,8 @@ description: Summary plus recent create and trade rows for the account.
 api: GET /account/metrics/
 ---
 
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
 <ParamField query="limit" type="integer" default="50">
   Max recent rows per list (capped at `200`).
 </ParamField>

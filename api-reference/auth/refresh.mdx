@@ -1,0 +1,37 @@
+---
+title: Refresh token
+description: Rotate a refresh token and obtain a new access token.
+api: POST /auth/token/refresh/
+---
+
+Public endpoint — no API key required. Refresh tokens are **rotated**: the previous refresh token is invalidated.
+
+<ParamField body="refresh" type="string" required>
+  Current refresh JWT.
+</ParamField>
+
+<ResponseField name="access" type="string">
+  New access JWT.
+</ResponseField>
+<ResponseField name="refresh" type="string">
+  New refresh JWT (rotated).
+</ResponseField>
+
+Invalid or expired refresh tokens return `401` `{ "code": "UNAUTHORIZED" }`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.panta.market/api/v1/auth/token/refresh/ \
+  -H "Content-Type: application/json" \
+  -d '{"refresh":"<jwt>"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "access": "<jwt>",
+  "refresh": "<jwt>"
+}
+```
+</ResponseExample>

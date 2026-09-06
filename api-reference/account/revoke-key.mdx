@@ -4,6 +4,8 @@ description: Revoke a key by id. Idempotent if the key is already revoked.
 api: POST /account/keys/{id}/revoke/
 ---
 
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
 <ParamField path="id" type="string" required>
   Key identifier (`key_…`).
 </ParamField>

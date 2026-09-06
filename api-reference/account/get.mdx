@@ -1,13 +1,16 @@
 ---
 title: Get account
-description: Return the account bound to the current API key.
+description: Return the account bound to the current API key or signup JWT.
 api: GET /account/
 ---
 
-`GET /whoami/` is an alias of this endpoint.
+`GET /whoami/` is an alias of this endpoint (GET only). Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 
 <ResponseField name="userId" type="string">
   Account identifier (`usr_…`).
+</ResponseField>
+<ResponseField name="email" type="string">
+  Login email.
 </ResponseField>
 <ResponseField name="name" type="string">
   Display name.
@@ -16,13 +19,13 @@ api: GET /account/
   `active` or `suspended`.
 </ResponseField>
 <ResponseField name="canCreateMarkets" type="boolean">
-  Whether create-market endpoints are allowed.
+  Whether create-market endpoints are allowed (defaults to `true` on signup).
 </ResponseField>
 <ResponseField name="createdAt" type="string">
   ISO-8601 timestamp.
 </ResponseField>
 <ResponseField name="apiKeyId" type="string">
-  Identifier of the key used for this request (`key_…`).
+  Identifier of the key used for this request (`key_…`), when authenticated with an API key.
 </ResponseField>
 
 <RequestExample>
@@ -36,9 +39,10 @@ curl https://api.panta.market/api/v1/account/ \
 ```json 200
 {
   "userId": "usr_…",
+  "email": "you@example.com",
   "name": "Acme",
   "status": "active",
-  "canCreateMarkets": false,
+  "canCreateMarkets": true,
   "createdAt": "2026-09-04T12:00:00.000000Z",
   "apiKeyId": "key_…"
 }

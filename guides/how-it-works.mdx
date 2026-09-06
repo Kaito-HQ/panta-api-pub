@@ -34,7 +34,7 @@ sequenceDiagram
 
 Sessions (`createId`) last about **5 minutes**. Rebuild if the blockhash expires (~60s). Do not edit accounts or fee amounts; register checks the chain against the quote.
 
-Creating a market also requires a public **1024×1024** image URL. See [Quote a market](/api-reference/markets/quote).
+Creating a market requires a public catalog `imageUrl` (recommended **1024×1024** square). Soft-validated URL rules — see [Quote a market](/api-reference/markets/quote). Optional fields include `region`, `oracle`, and (for breaking markets) `eventInProgress`.
 
 ## Primary buy
 
@@ -47,6 +47,8 @@ Same pattern, different ids:
 | After broadcast | submit and/or verify with `signature` |
 
 Primary buy **build** returns **instructions** (not a fully assembled tx). Compile a versioned transaction from `instructions` + `recentBlockhash`, then sign.
+
+Optional `userId` / `X-User-Id` on quote and build ties the order to an attribution id (defaults to the authenticated account).
 
 If the curve moved more than `maxSlippageBps` between quote and build, you get `QUOTE_STALE` — requote.
 

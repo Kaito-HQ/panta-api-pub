@@ -4,6 +4,8 @@ description: Update the display name on the authenticated account.
 api: PATCH /account/
 ---
 
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
 <ParamField body="name" type="string" required>
   Non-empty display name (max 255).
 </ParamField>
@@ -23,9 +25,10 @@ curl -X PATCH https://api.panta.market/api/v1/account/ \
 ```json 200
 {
   "userId": "usr_…",
+  "email": "you@example.com",
   "name": "Acme Labs",
   "status": "active",
-  "canCreateMarkets": false,
+  "canCreateMarkets": true,
   "createdAt": "2026-09-04T12:00:00.000000Z",
   "apiKeyId": "key_…"
 }

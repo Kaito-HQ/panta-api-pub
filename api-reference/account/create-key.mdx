@@ -4,12 +4,14 @@ description: Issue a new API key. The plaintext secret is returned only in this 
 api: POST /account/keys/
 ---
 
+Accepts `X-Api-Key` or `Authorization: Bearer <access>` (typical after signup).
+
 <Warning>
 Persist `secret` immediately. It cannot be retrieved again.
 </Warning>
 
 <ParamField body="env" type="string" required>
-  `test` or `live`. Must match the host environment to be usable.
+  `test` or `live` — selects the key prefix (`pk_test_…` / `pk_live_…`). Live hosts accept both prefixes; test hosts reject `pk_live_`.
 </ParamField>
 <ParamField body="name" type="string">
   Optional label (max 128).
@@ -25,7 +27,7 @@ Persist `secret` immediately. It cannot be retrieved again.
 <RequestExample>
 ```bash cURL
 curl -X POST https://api.panta.market/api/v1/account/keys/ \
-  -H "X-Api-Key: pk_test_…" \
+  -H "Authorization: Bearer <access>" \
   -H "Content-Type: application/json" \
   -d '{"env":"test","name":"ci","revokeOthers":false}'
 ```

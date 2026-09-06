@@ -4,6 +4,8 @@ description: List API keys for the authenticated account. Secrets are never incl
 api: GET /account/keys/
 ---
 
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
 <ResponseField name="keys" type="array">
   Key metadata. Each item has `id`, `name`, `prefix`, `env`, `status`, `createdAt`, `revokedAt`.
 </ResponseField>

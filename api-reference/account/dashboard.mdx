@@ -4,6 +4,8 @@ description: Aggregated account, key counts, and usage counters.
 api: GET /account/dashboard/
 ---
 
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
 <ResponseField name="account" type="object">
   Same shape as [Get account](/api-reference/account/get).
 </ResponseField>
@@ -29,9 +31,10 @@ curl https://api.panta.market/api/v1/account/dashboard/ \
 {
   "account": {
     "userId": "usr_…",
+    "email": "you@example.com",
     "name": "Acme",
     "status": "active",
-    "canCreateMarkets": false,
+    "canCreateMarkets": true,
     "createdAt": "2026-09-04T12:00:00.000000Z",
     "apiKeyId": "key_…"
   },
@@ -40,7 +43,7 @@ curl https://api.panta.market/api/v1/account/dashboard/ \
     "creates": { "total": 0, "byStatus": {} },
     "trades": { "total": 0, "volumeUsdcBase": 0, "byKind": {} }
   },
-  "permissions": { "canCreateMarkets": false }
+  "permissions": { "canCreateMarkets": true }
 }
 ```
 </ResponseExample>

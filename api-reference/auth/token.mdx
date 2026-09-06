@@ -1,0 +1,36 @@
+---
+title: Login
+description: Exchange email and password for access + refresh JWTs.
+api: POST /auth/token/
+---
+
+Public endpoint — no API key required. Response envelope matches [Register](/api-reference/auth/register).
+
+<ParamField body="email" type="string" required>
+  Account email.
+</ParamField>
+<ParamField body="password" type="string" required>
+  Account password.
+</ParamField>
+
+Invalid credentials return `401` `{ "code": "UNAUTHORIZED" }`. Suspended accounts are also unauthorized.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.panta.market/api/v1/auth/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com","password":"a-strong-password"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "userId": "usr_…",
+  "email": "you@example.com",
+  "name": "Acme",
+  "access": "<jwt>",
+  "refresh": "<jwt>"
+}
+```
+</ResponseExample>

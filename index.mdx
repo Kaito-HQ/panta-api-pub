@@ -8,12 +8,15 @@ description: Build Permissionless Prediction Markets Using Our Native API — qu
 You never custody wallets. Panta returns unsigned transactions (or instruction lists). The user’s wallet signs. You broadcast on **your** RPC, then tell Panta the signature.
 
 <Info>
-Base path: `https://{host}/api/v1`. Trailing slashes are required. Authenticate every route with `X-Api-Key`.
+Base path: `https://{host}/api/v1`. Trailing slashes are required. Authenticate with `X-Api-Key` **or** `Authorization: Bearer <access>` ([Authentication](/guides/authentication)).
 </Info>
 
 ## What you can do
 
 <CardGroup cols={2}>
+  <Card title="Sign up and mint a key" icon="key" href="/guides/authentication">
+    Register or log in, create a `pk_test_…` / `pk_live_…` key, then call product routes.
+  </Card>
   <Card title="Create a market" icon="plus" href="/api-reference/markets/overview">
     Quote the USDC creation fee, build an unsigned tx, register after broadcast.
   </Card>
@@ -29,9 +32,6 @@ Base path: `https://{host}/api/v1`. Trailing slashes are required. Authenticate 
   <Card title="Trade attribution" icon="receipt" href="/api-reference/trades/report">
     Verify on-chain buys and claims for volume reporting.
   </Card>
-  <Card title="Account and keys" icon="key" href="/api-reference/account/get">
-    Profile, usage, and API key lifecycle for your integration.
-  </Card>
 </CardGroup>
 
 ## Custody model
@@ -43,7 +43,7 @@ sequenceDiagram
   participant Wallet as User wallet
   participant Solana as Solana
 
-  App->>API: API key + JSON (quote / build)
+  App->>API: API key or JWT + JSON (quote / build)
   API-->>App: Unsigned tx or instructions
   App->>Wallet: Request signature
   Wallet-->>App: Signed tx
@@ -65,7 +65,7 @@ Panta cooks the transaction. The user signs. You file it on-chain. Then you send
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Get a key and make your first request.
+    Register, mint a key, and make your first request.
   </Card>
   <Card title="How it works" icon="diagram-project" href="/guides/how-it-works">
     Quote → build → sign → broadcast → confirm.

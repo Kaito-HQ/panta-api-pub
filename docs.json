@@ -54,6 +54,14 @@
         "tab": "API reference",
         "groups": [
           {
+            "group": "Auth",
+            "pages": [
+              "api-reference/auth/register",
+              "api-reference/auth/token",
+              "api-reference/auth/refresh"
+            ]
+          },
+          {
             "group": "Account",
             "pages": [
               "api-reference/account/get",

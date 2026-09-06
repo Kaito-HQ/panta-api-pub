@@ -6,12 +6,12 @@ description: Quote the USDC fee, build an unsigned transaction, then register af
 Creates a USDC prediction market. Fee quotation, unsigned transaction construction, and post-broadcast registration are separate steps.
 
 <Warning>
-Requires `canCreateMarkets: true` on the account. Otherwise the API returns `{ "code": "CREATE_NOT_PERMITTED" }`.
+Requires `canCreateMarkets: true` on the account (default on signup). Otherwise the API returns `{ "code": "CREATE_NOT_PERMITTED" }`.
 </Warning>
 
 <Steps>
   <Step title="Quote">
-    [`POST /markets/create/quote/`](/api-reference/markets/quote) — validate params, check `imageUrl`, reserve a session, return the creation fee.
+    [`POST /markets/create/quote/`](/api-reference/markets/quote) — validate params and `imageUrl`, reserve a session, return the creation fee.
   </Step>
   <Step title="Build">
     [`POST /markets/create/build/`](/api-reference/markets/build) — unsigned `VersionedTransaction` plus blockhash.
@@ -27,5 +27,5 @@ Requires `canCreateMarkets: true` on the account. Otherwise the API returns `{ "
 Sessions last about 5 minutes. Rebuild if the blockhash expires (~60s). Do not change instruction accounts or fee amounts.
 
 <Info>
-Every quote needs a public **1024×1024** image URL (`imageUrl`). Catalog-only — it is not written on-chain. Details on the [quote](/api-reference/markets/quote) page.
+Every quote needs a catalog `imageUrl` (public `http`/`https`, no localhost/private hosts). **1024×1024** square is recommended for cards; the API does not hard-check dimensions or file size. Optional: `region`, `oracle`, and `eventInProgress` (breaking only). Details on the [quote](/api-reference/markets/quote) page.
 </Info>

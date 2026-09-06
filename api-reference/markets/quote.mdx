@@ -1,6 +1,6 @@
 ---
 title: Quote a market
-description: Validate parameters, check the market image URL, reserve a create session, and return the USDC creation fee.
+description: Validate parameters, soft-check the catalog image URL, reserve a create session, and return the USDC creation fee.
 api: POST /markets/create/quote/
 ---
 
@@ -8,17 +8,17 @@ Fee amounts are USDC **base units** (integer strings, 6 decimals). `paymentUsdc`
 
 ## Market image
 
-`imageUrl` is required. Host the file yourself (S3, GCS, R2, Cloudinary, …) with public HTTPS read. The API fetches it at quote time.
+`imageUrl` is required and **catalog-only** (not written on-chain). Host the file yourself (S3, GCS, R2, Cloudinary, …) and pass a permanent public URL.
 
 | Rule | Value |
 | --- | --- |
 | Count | Exactly one URL (string, not an array) |
-| Dimensions | Exactly **1024×1024** |
-| Formats | JPG / JPEG, PNG, GIF, or WebP |
-| Max size | 5 MB |
-| Protocol | Publicly reachable `https` (or `http`) |
+| Protocol | Publicly reachable `http` or `https` |
+| Host | Must not be localhost / private network (SSRF guard) |
+| Dimensions | Recommended **1024×1024** square (client/uploader concern — not a hard API check) |
+| Max length | 2048 characters |
 
-Do not pass data URLs, short-lived signed URLs, or private buckets.
+Do not pass data URLs, short-lived signed URLs, or private buckets. Soft validation may reject unsafe hosts; there is no hard format/size gate.
 
 <ParamField body="wallet" type="string" required>
   Fee payer and transaction signer (base58).
@@ -45,7 +45,7 @@ Do not pass data URLs, short-lived signed URLs, or private buckets.
   Unix seconds.
 </ParamField>
 <ParamField body="imageUrl" type="string" required>
-  Public URL of a 1024×1024 JPG/PNG/GIF/WebP (≤5 MB). Catalog only.
+  Catalog image URL (`http`/`https`). Soft-validated (SSRF + optional sniff). Recommended 1024×1024 square.
 </ParamField>
 <ParamField body="marketType" type="string">
   `standard` (default) or `breaking`.
@@ -85,7 +85,7 @@ Do not pass data URLs, short-lived signed URLs, or private buckets.
   Session expiry (ISO-8601).
 </ResponseField>
 
-Errors: `INVALID_MARKET_PARAMS` · `DUPLICATE_MARKET` · `CREATE_NOT_PERMITTED` · `UNAUTHORIZED` · `RATE_LIMITED`. A bad `imageUrl` is HTTP `400` with field errors.
+Errors: `INVALID_MARKET_PARAMS` · `DUPLICATE_MARKET` · `CREATE_NOT_PERMITTED` · `UNAUTHORIZED` · `RATE_LIMITED`. Field validation failures (including a bad `imageUrl`) return HTTP `400` with `code` plus `fields`.
 
 <RequestExample>
 ```bash cURL
