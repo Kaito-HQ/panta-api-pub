@@ -74,6 +74,17 @@
             ]
           },
           {
+            "group": "Markets catalog",
+            "pages": [
+              "api-reference/markets/catalog",
+              "api-reference/markets/list",
+              "api-reference/markets/get",
+              "api-reference/markets/trades",
+              "api-reference/markets/categories",
+              "api-reference/markets/wallet-trades"
+            ]
+          },
+          {
             "group": "Create market",
             "pages": [
               "api-reference/markets/overview",

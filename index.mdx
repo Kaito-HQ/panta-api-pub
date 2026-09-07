@@ -3,7 +3,7 @@ title: Panta API
 description: Build Permissionless Prediction Markets Using Our Native API — quote, construct unsigned Solana transactions, and attribute trades without holding user keys.
 ---
 
-**Panta** is a binary YES/NO prediction market infrastructure on Solana. This API lets your app create markets, buy primary shares, read positions, build claim transactions, and report trades.
+**Panta** is a binary YES/NO prediction market infrastructure on Solana. This API lets your app browse markets, create markets, buy primary shares, read positions, build claim transactions, and report trades.
 
 You never custody wallets. Panta returns unsigned transactions (or instruction lists). The user’s wallet signs. You broadcast on **your** RPC, then tell Panta the signature.
 
@@ -16,6 +16,9 @@ Base path: `https://{host}/api/v1`. Trailing slashes are required. Authenticate 
 <CardGroup cols={2}>
   <Card title="Sign up and mint a key" icon="key" href="/guides/authentication">
     Register or log in, create a `pk_test_…` / `pk_live_…` key, then call product routes.
+  </Card>
+  <Card title="Browse markets" icon="magnifying-glass" href="/api-reference/markets/catalog">
+    List the USDC catalog, fetch detail prices, and read market or wallet trades.
   </Card>
   <Card title="Create a market" icon="plus" href="/api-reference/markets/overview">
     Quote the USDC creation fee, build an unsigned tx, register after broadcast.

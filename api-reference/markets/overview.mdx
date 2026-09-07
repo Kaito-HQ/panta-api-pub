@@ -5,6 +5,8 @@ description: Quote the USDC fee, build an unsigned transaction, then register af
 
 Creates a USDC prediction market. Fee quotation, unsigned transaction construction, and post-broadcast registration are separate steps.
 
+To **browse** existing markets, see the [Markets catalog](/api-reference/markets/catalog).
+
 <Warning>
 Requires `canCreateMarkets: true` on the account (default on signup). Otherwise the API returns `{ "code": "CREATE_NOT_PERMITTED" }`.
 </Warning>

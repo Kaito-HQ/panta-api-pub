@@ -1,0 +1,37 @@
+---
+title: Categories
+description: Allowlist of market categories for create and list filters.
+api: GET /categories/
+---
+
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
+Use these values for create-quote `category` and [List markets](/api-reference/markets/list) `category` query.
+
+<ResponseField name="categories" type="string[]">
+  Allowed category slugs.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl https://api.panta.market/api/v1/categories/ \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "categories": [
+    "sports",
+    "crypto",
+    "politics",
+    "entertainment",
+    "finance",
+    "science",
+    "world",
+    "other"
+  ]
+}
+```
+</ResponseExample>

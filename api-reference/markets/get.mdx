@@ -1,0 +1,51 @@
+---
+title: Get market
+description: Single USDC market catalog row with spot prices when RPC is available.
+api: GET /markets/{marketId}/
+---
+
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
+Same item shape as [List markets](/api-reference/markets/list), with `yesPrice` / `noPrice` / `primary*` / `secondary*` filled from on-chain state when RPC is available.
+
+<ParamField path="marketId" type="string" required>
+  Event / market address (base58).
+</ParamField>
+
+Errors: `UNAUTHORIZED` · `RATE_LIMITED` · `MARKET_NOT_FOUND`.
+
+<RequestExample>
+```bash cURL
+curl "https://api.panta.market/api/v1/markets/EventPda11111111111111111111111111111/" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "marketId": "…",
+  "category": "crypto",
+  "title": "ETH above 5k?",
+  "description": "…",
+  "images": ["https://…"],
+  "phase": "primary",
+  "marketType": "standard",
+  "startTime": 1767225600,
+  "endTime": 1798761599,
+  "resolutionTime": 1798765199,
+  "region": "Global",
+  "resolved": false,
+  "status": "open",
+  "volumeUsdc": "1200.00",
+  "campaignId": null,
+  "createdByPartner": true,
+  "yesPrice": "0.52",
+  "noPrice": "0.48",
+  "primaryYesPrice": "0.52",
+  "primaryNoPrice": "0.48",
+  "secondaryYesPrice": null,
+  "secondaryNoPrice": null
+}
+```
+</ResponseExample>
