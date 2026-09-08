@@ -69,9 +69,13 @@ Both return instruction lists + `recentBlockhash` (same compile → sign → bro
 
 1. Load positions for the wallet.
 2. For each distinct `marketId`, call [`GET /markets/{marketId}/`](/api-reference/markets/get) for `yesPrice` / `noPrice`.
-3. Estimate open value as `shares ×` the matching side price; claimable wins ≈ `shares × 1` USDC.
+3. Estimate open value as `shares ×` the matching side price; after resolution, win ≈ `shares × 1` USDC and lose ≈ `0`.
 
 See [List positions → Estimating position value](/api-reference/positions#estimating-position-value-client-side).
+
+## Partner volume and fees
+
+[`GET /account/metrics/`](/api-reference/account/metrics) (and dashboard) expose attributed **volume** (`volumeUsdcBase`) for this account. Protocol trading fees are not returned as a separate field; estimate primary fees as `volume × primaryFeeBps / 10_000` using on-chain `MarketConfig` (often 200 bps = 2%). Details: [Metrics](/api-reference/account/metrics#estimating-protocol-fees-client-side).
 
 ## What Panta verifies
 

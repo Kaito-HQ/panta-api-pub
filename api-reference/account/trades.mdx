@@ -9,6 +9,8 @@ Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 
 These are attribution rows, not the full Balr trade tape. For catalog tape use [Market trades](/api-reference/markets/trades) or [Wallet trades](/api-reference/markets/wallet-trades).
 
+`summary.volumeUsdcBase` is the sum of attributed buy/claim sizes in USDC **base units** (÷ 1e6 for dollars). Protocol fees are not included — see [Metrics → Estimating protocol fees](/api-reference/account/metrics#estimating-protocol-fees-client-side).
+
 <ParamField query="limit" type="integer" default="50">
   Max rows (capped at `200`).
 </ParamField>
@@ -20,7 +22,7 @@ These are attribution rows, not the full Balr trade tape. For catalog tape use [
   Trade totals (`total`, `volumeUsdcBase`, `byKind`).
 </ResponseField>
 <ResponseField name="items" type="array">
-  Attribution rows: `signature`, `wallet`, `marketId`, `side`, `kind`, `amountUsdc`, `status`, `createdAt`.
+  Attribution rows: `signature`, `wallet`, `marketId`, `side`, `kind`, `amountUsdc` (human decimal), `amountUsdcBase`, `status`, `createdAt`.
 </ResponseField>
 
 <RequestExample>
@@ -45,7 +47,8 @@ curl "https://live-api.panta.market/api/v1/account/trades/?limit=50&kind=buy" \
       "marketId": "…",
       "side": "yes",
       "kind": "buy",
-      "amountUsdc": "20000000",
+      "amountUsdc": "20.00",
+      "amountUsdcBase": "20000000",
       "status": "processed",
       "createdAt": "2026-09-04T12:00:00.000000Z"
     }

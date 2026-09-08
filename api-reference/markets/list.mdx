@@ -7,7 +7,9 @@ authMethod: "key"
 
 Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 
-List rows do **not** live-RPC for prices. Use [Get market](/api-reference/markets/get) for spot prices. `createdByPartner` is `true` when this account has a create metric for that `marketId`.
+List rows come from the **USDC market catalog** (registry), not a live full-chain scan. They do **not** live-RPC for prices. Use [Get market](/api-reference/markets/get) for spot prices. `createdByPartner` is `true` when this account has a create metric for that `marketId`.
+
+Without `createdBy=me`, the list is the general public catalog (optionally filtered by category/status). With `createdBy=me`, only markets this API account created via the create flow.
 
 <ParamField query="category" type="string">
   Must be in [`GET /categories/`](/api-reference/markets/categories).

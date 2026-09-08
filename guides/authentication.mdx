@@ -61,6 +61,19 @@ curl https://live-api.panta.market/api/v1/account/ \
 
 API keys must be sent in `X-Api-Key`. Keys in query parameters are rejected with `401` and `{ "code": "UNAUTHORIZED" }`.
 
+## Response headers
+
+Successful `/api/…` responses may include:
+
+| Header | When | Notes |
+| --- | --- | --- |
+| `X-Request-Id` | Always (echo or generated) | Correlate logs |
+| `X-Powered-By` | **2xx** API responses | Value `Panta` — branding for integrators |
+| `X-RateLimit-Limit` / `Remaining` / `Reset` | Authenticated routes | See [Errors](/guides/errors#rate-limits) |
+| `Retry-After` | On `429` | Seconds to wait |
+
+Browser apps that call the API **cross-origin** can only read headers listed in CORS `Access-Control-Expose-Headers` (today: request id, rate limits, `Retry-After`). `X-Powered-By` is always visible to **server-side** clients (curl, backends, proxies). To show “Powered by Panta” in a browser SPA, either call via your backend or hardcode the badge.
+
 ## API key prefixes
 
 | Prefix | Notes |

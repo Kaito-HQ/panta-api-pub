@@ -7,6 +7,8 @@ authMethod: "key"
 
 Indexer balances may lag the chain briefly after a purchase. Result sets are capped (typically 200 rows). When `claimable` is `true`, use [Build win claim](/api-reference/claims/build). Creator fees use a separate path: [Claim creator fees](/api-reference/claims/creator-fees).
 
+Each holding with both YES and NO shares becomes **two rows** (one per `side`) for the same `marketId` — that is expected, not a duplicate.
+
 <ParamField query="wallet" type="string" required>
   Base58 Solana public key.
 </ParamField>
@@ -40,9 +42,11 @@ Positions return **share quantity**, not a dollar balance. Your app should combi
 
 | Situation | How to estimate |
 | --- | --- |
-| Open market (not claimable) | `value ≈ shares × yesPrice` if `side` is `yes`, else `shares × noPrice` |
-| Claimable win | Treat winning shares ≈ **1 USDC each** (or use `winningShares` from [Build win claim](/api-reference/claims/build)) |
-| Resolved loser | ≈ `0` |
+| Open market (`outcome` null, not claimable) | `value ≈ shares × yesPrice` if `side` is `yes`, else `shares × noPrice` |
+| Resolved winner (`side === outcome`) / claimable | ≈ **1 USDC per share** (or `winningShares` from [Build win claim](/api-reference/claims/build)) |
+| Resolved loser (`side !== outcome`) | ≈ `0` |
+
+Once a market is **resolved**, stop using live spot prices for portfolio value — settlement is win ≈ $1/share, lose = $0. Spot `yesPrice` / `noPrice` are for open markets.
 
 Example (open YES position):
 

@@ -7,7 +7,13 @@ authMethod: "key"
 
 Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 
-Prefer [`GET /markets/?createdBy=me`](/api-reference/markets/list) for catalog DTOs of markets you created. This endpoint returns create-session metrics (`pending`, `registered`, …).
+Prefer [`GET /markets/?createdBy=me`](/api-reference/markets/list) for catalog DTOs of markets you created. This endpoint returns create-session metrics (`pending`, `built`, `registered`, …).
+
+| Status | Meaning |
+| --- | --- |
+| `pending` | Quote reserved |
+| `built` | Unsigned tx built; register not completed |
+| `registered` | Create tx verified and catalog registered |
 
 <ParamField query="limit" type="integer" default="50">
   Max rows (capped at `200`).
@@ -20,7 +26,7 @@ Prefer [`GET /markets/?createdBy=me`](/api-reference/markets/list) for catalog D
   Create totals (`total`, `byStatus`).
 </ResponseField>
 <ResponseField name="items" type="array">
-  Create rows: `createId`, `wallet`, `eventPda`, `signature`, `status`, `paymentUsdc`, `createdAt`, `updatedAt`.
+  Create rows — same shape as [Metrics](/api-reference/account/metrics) `creates[]` (`paymentUsdc` human decimal + `paymentUsdcBase`).
 </ResponseField>
 
 <RequestExample>
@@ -41,7 +47,8 @@ curl "https://live-api.panta.market/api/v1/account/creates/?limit=50&status=regi
       "status": "registered",
       "wallet": "…",
       "signature": "…",
-      "paymentUsdc": "50000000",
+      "paymentUsdc": "50.00",
+      "paymentUsdcBase": "50000000",
       "createdAt": "2026-09-04T12:00:00.000000Z",
       "updatedAt": "2026-09-04T12:05:00.000000Z"
     }

@@ -14,7 +14,7 @@ Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
   `active`, `revoked`, and `total` key counts.
 </ResponseField>
 <ResponseField name="metrics" type="object">
-  Create and trade totals for this account.
+  Create and trade totals for this account (`trades.volumeUsdcBase` = attributed volume in base units). Fees are not included — see [Metrics](/api-reference/account/metrics#estimating-protocol-fees-client-side).
 </ResponseField>
 <ResponseField name="permissions" type="object">
   Includes `canCreateMarkets`.
