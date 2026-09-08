@@ -48,7 +48,7 @@
     "mdx": {
       "server": "https://live-api.panta.market/api/v1",
       "auth": {
-        "method": "none",
+        "method": "key",
         "name": "X-Api-Key"
       }
     }
