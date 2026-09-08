@@ -116,6 +116,7 @@
             "group": "Create market",
             "pages": [
               "api-reference/markets/overview",
+              "api-reference/markets/image-upload",
               "api-reference/markets/quote",
               "api-reference/markets/build",
               "api-reference/markets/register"

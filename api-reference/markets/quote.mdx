@@ -9,7 +9,7 @@ Fee amounts are USDC **base units** (integer strings, 6 decimals). `paymentUsdc`
 
 ## Market image
 
-`imageUrl` is required and **catalog-only** (not written on-chain). Host the file yourself (S3, GCS, R2, Cloudinary, …) and pass a permanent public URL.
+`imageUrl` is required and **catalog-only** (not written on-chain). Either host the file yourself or use [`POST /markets/create/image-upload/`](/api-reference/markets/image-upload) and pass Cloudinary's `secure_url`.
 
 | Rule | Value |
 | --- | --- |

@@ -12,6 +12,9 @@ Requires `canCreateMarkets: true` on the account (default on signup). Otherwise 
 </Warning>
 
 <Steps>
+  <Step title="Upload image (optional helper)">
+    [`POST /markets/create/image-upload/`](/api-reference/markets/image-upload) — signed Cloudinary fields; upload the file yourself, then use `secure_url` as `imageUrl`.
+  </Step>
   <Step title="Quote">
     [`POST /markets/create/quote/`](/api-reference/markets/quote) — validate params and `imageUrl`, reserve a session, return the creation fee.
   </Step>
@@ -29,5 +32,5 @@ Requires `canCreateMarkets: true` on the account (default on signup). Otherwise 
 Sessions last about 5 minutes. Rebuild if the blockhash expires (~60s). Do not change instruction accounts or fee amounts.
 
 <Info>
-Every quote needs a catalog `imageUrl` (public `http`/`https`, no localhost/private hosts). **1024×1024** square is recommended for cards; the API does not hard-check dimensions or file size. Optional: `region`, `oracle`, and `eventInProgress` (breaking only). Details on the [quote](/api-reference/markets/quote) page.
+Every quote needs a catalog `imageUrl` on a host your product can display (e.g. Cloudinary via the [image upload](/api-reference/markets/image-upload) helper). **1024×1024** square is recommended. Optional: `region`, `oracle`, and `eventInProgress` (breaking only).
 </Info>
