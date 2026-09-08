@@ -23,7 +23,7 @@ Opens at the URL Mintlify prints (usually `http://localhost:3000`).
 
 Endpoint contracts are adapted from `panta-dev` (`docs/external/` and the live Django routes). Prefer the running API when docs and code diverge.
 
-Auth note: authenticated routes accept **either** `X-Api-Key` or signup JWT. Live hosts accept `pk_test_` and `pk_live_`; test hosts accept `pk_test_` only.
+Auth note: authenticated routes accept **either** `X-Api-Key` or signup JWT. Public docs and Try it use `https://live-api.panta.market/api/v1` only.
 
 ## Publish
 

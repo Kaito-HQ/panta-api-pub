@@ -20,14 +20,9 @@ curl -sS -X POST https://live-api.panta.market/api/v1/account/keys/ \
   -d '{"env":"test","name":"ci"}'
 ```
 
-Or use **Try it** on the [Register](/api-reference/auth/register) and [Create API key](/api-reference/account/create-key) pages (playground → production `live-api.panta.market`).
+Or use **Try it** on the [Register](/api-reference/auth/register) and [Create API key](/api-reference/account/create-key) pages (playground → `live-api.panta.market`).
 
-Keys look like:
-
-```
-pk_test_…   usable on test and live hosts
-pk_live_…   usable on live hosts only
-```
+Keys look like `pk_test_…` or `pk_live_…` (both work on the public API).
 
 The plaintext `secret` is shown **once**. Store it in your backend. Never put it in a query string, mobile binary, or frontend bundle.
 

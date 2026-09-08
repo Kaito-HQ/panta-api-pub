@@ -61,14 +61,14 @@ curl https://live-api.panta.market/api/v1/account/ \
 
 API keys must be sent in `X-Api-Key`. Keys in query parameters are rejected with `401` and `{ "code": "UNAUTHORIZED" }`.
 
-## Environments
+## API key prefixes
 
-| Prefix | Accepted when |
+| Prefix | Notes |
 | --- | --- |
-| `pk_test_` | Server `API_KEY_ENV` is `test` **or** `live` |
-| `pk_live_` | Server `API_KEY_ENV` is `live` |
+| `pk_test_` | Accepted on the public API |
+| `pk_live_` | Accepted on the public API |
 
-`pk_live_` keys are rejected on test hosts. A rejected key is the same `401 UNAUTHORIZED` as a bad secret — the API does not say which check failed.
+A rejected key is the same `401 UNAUTHORIZED` as a bad secret — the API does not say which check failed.
 
 ## Key lifecycle
 
