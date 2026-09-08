@@ -2,6 +2,7 @@
 title: Build claim
 description: Unsigned claim instructions for a resolved market when the wallet holds winning shares.
 api: POST /claim/build/
+authMethod: "key"
 ---
 
 Use [List positions](/api-reference/positions) to check `claimable` first. This endpoint re-validates eligibility on-chain and fails closed if preconditions are not met.

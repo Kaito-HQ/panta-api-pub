@@ -2,6 +2,7 @@
 title: Revoke API key
 description: Revoke a key by id. Idempotent if the key is already revoked.
 api: POST /account/keys/{id}/revoke/
+authMethod: "key"
 ---
 
 Accepts `X-Api-Key` or `Authorization: Bearer <access>`.

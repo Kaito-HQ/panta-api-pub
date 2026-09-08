@@ -2,6 +2,7 @@
 title: Register market
 description: Verify the confirmed on-chain create and write catalog / oracle metadata.
 api: POST /markets/register/
+authMethod: "key"
 ---
 
 Verification is fail-closed (transaction presence and success, program, accounts, fee match). Repeating the same `createId` and `signature` is idempotent. After success, `createId` cannot register a different signature.

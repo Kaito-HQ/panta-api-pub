@@ -2,6 +2,7 @@
 title: List positions
 description: USDC market holdings for a wallet — shares, phase, and claim eligibility.
 api: GET /positions/
+authMethod: "key"
 ---
 
 Indexer balances may lag the chain briefly after a purchase. Result sets are capped (typically 200 rows). When `claimable` is `true`, use [Build claim](/api-reference/claims/build).

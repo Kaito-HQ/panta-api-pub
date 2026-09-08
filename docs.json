@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Panta API",
-  "description": "Public API for Panta USDC prediction markets on Solana. Quote, build unsigned transactions, and attribute trades — without holding user keys.",
+  "description": "Public API for Panta USDC prediction markets on Solana. Quote, build unsigned transactions, and attribute trades \u2014 without holding user keys.",
   "colors": {
     "primary": "#0A0A0A",
     "light": "#3F3F46",
@@ -37,14 +37,18 @@
     },
     "url": "full",
     "examples": {
-      "languages": ["curl", "javascript", "python"],
+      "languages": [
+        "curl",
+        "javascript",
+        "python"
+      ],
       "defaults": "required",
       "autogenerate": true
     },
     "mdx": {
       "server": "https://live-api.panta.market/api/v1",
       "auth": {
-        "method": "key",
+        "method": "none",
         "name": "X-Api-Key"
       }
     }
@@ -56,7 +60,11 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "quickstart", "guides/how-it-works"]
+            "pages": [
+              "index",
+              "quickstart",
+              "guides/how-it-works"
+            ]
           },
           {
             "group": "Platform",
@@ -142,6 +150,12 @@
     ]
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor"
+    ]
   }
 }

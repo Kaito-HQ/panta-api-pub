@@ -2,6 +2,7 @@
 title: Build primary buy
 description: Construct unsigned primary_order_usdc instructions from a live quote.
 api: POST /primaryorderbuild/
+authMethod: "key"
 ---
 
 Rejected if the curve has moved beyond `maxSlippageBps` (`QUOTE_STALE`). Compile a versioned transaction from `instructions` and `recentBlockhash`, sign with `wallet`, then broadcast.

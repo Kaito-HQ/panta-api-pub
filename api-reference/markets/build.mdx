@@ -2,6 +2,7 @@
 title: Build create transaction
 description: Return an unsigned versioned transaction for the quoted create.
 api: POST /markets/create/build/
+authMethod: "key"
 ---
 
 Decode `transaction`, sign with `wallet`, then broadcast. If the blockhash expires, call build again with a valid `createId` (or re-quote if the session expired).
