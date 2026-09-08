@@ -31,6 +31,29 @@ Indexer balances may lag the chain briefly after a purchase. Result sets are cap
 
 Errors: `INVALID_MARKET_PARAMS` · `RATE_LIMITED`.
 
+## Estimating position value (client-side)
+
+Positions return **share quantity**, not a dollar balance. Your app should combine:
+
+1. [`GET /positions/?wallet=`](/api-reference/positions) — `shares`, `side`, `claimable`, `outcome`
+2. [`GET /markets/{marketId}/`](/api-reference/markets/get) — spot `yesPrice` / `noPrice` (list rows often leave these `null`)
+
+| Situation | How to estimate |
+| --- | --- |
+| Open market (not claimable) | `value ≈ shares × yesPrice` if `side` is `yes`, else `shares × noPrice` |
+| Claimable win | Treat winning shares ≈ **1 USDC each** (or use `winningShares` from [Build win claim](/api-reference/claims/build)) |
+| Resolved loser | ≈ `0` |
+
+Example (open YES position):
+
+```text
+shares = 38.40
+yesPrice = 0.52   // from GET /markets/{marketId}/
+estValueUsdc ≈ 38.40 × 0.52 = 19.97
+```
+
+This is mark-to-market for UI display — not a guaranteed settlement amount. Cache market detail per distinct `marketId` so you do not refetch the same market for every row.
+
 <RequestExample>
 ```bash cURL
 curl "https://live-api.panta.market/api/v1/positions/?wallet=Buyer111111111111111111111111111111111" \

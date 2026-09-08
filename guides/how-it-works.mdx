@@ -63,6 +63,16 @@ If the curve moved more than `maxSlippageBps` between quote and build, you get `
 
 Both return instruction lists + `recentBlockhash` (same compile → sign → broadcast pattern as primary buy).
 
+## Portfolio value
+
+[`GET /positions/`](/api-reference/positions) returns share counts, not USD. To show “worth ~$X” in your app:
+
+1. Load positions for the wallet.
+2. For each distinct `marketId`, call [`GET /markets/{marketId}/`](/api-reference/markets/get) for `yesPrice` / `noPrice`.
+3. Estimate open value as `shares ×` the matching side price; claimable wins ≈ `shares × 1` USDC.
+
+See [List positions → Estimating position value](/api-reference/positions#estimating-position-value-client-side).
+
 ## What Panta verifies
 
 On register / trade report, verification is fail-closed: the transaction must exist, succeed, include the expected wallet, market, and program, and match quoted fees where applicable. Trade report accepts **primary buys** and **win claims** only.

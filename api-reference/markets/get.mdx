@@ -9,6 +9,8 @@ Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 
 Same item shape as [List markets](/api-reference/markets/list), with `yesPrice` / `noPrice` / `primary*` / `secondary*` filled from on-chain state when RPC is available.
 
+Use these prices with [List positions](/api-reference/positions#estimating-position-value-client-side) to estimate mark-to-market value in your client (`shares ×` side price).
+
 <ParamField path="marketId" type="string" required>
   Event / market address (base58).
 </ParamField>
