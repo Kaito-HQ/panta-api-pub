@@ -18,6 +18,10 @@
       {
         "label": "panta.market",
         "href": "https://panta.market"
+      },
+      {
+        "label": "Terms",
+        "href": "/guides/terms-of-use"
       }
     ]
   },
@@ -27,8 +31,18 @@
     }
   },
   "api": {
+    "playground": {
+      "display": "interactive",
+      "proxy": true
+    },
+    "url": "full",
+    "examples": {
+      "languages": ["curl", "javascript", "python"],
+      "defaults": "required",
+      "autogenerate": true
+    },
     "mdx": {
-      "server": "https://api.panta.market/api/v1",
+      "server": "https://live-api.panta.market/api/v1",
       "auth": {
         "method": "key",
         "name": "X-Api-Key"
@@ -46,7 +60,11 @@
           },
           {
             "group": "Platform",
-            "pages": ["guides/authentication", "guides/errors"]
+            "pages": [
+              "guides/authentication",
+              "guides/errors",
+              "guides/terms-of-use"
+            ]
           }
         ]
       },
@@ -68,6 +86,8 @@
               "api-reference/account/update",
               "api-reference/account/dashboard",
               "api-reference/account/metrics",
+              "api-reference/account/creates",
+              "api-reference/account/trades",
               "api-reference/account/list-keys",
               "api-reference/account/create-key",
               "api-reference/account/revoke-key"

@@ -2,6 +2,7 @@
 title: Register
 description: Create an account and receive access + refresh JWTs.
 api: POST /auth/register/
+authMethod: none
 ---
 
 Public endpoint — no API key required.
@@ -38,7 +39,7 @@ Duplicate emails return `409` `{ "code": "EMAIL_TAKEN" }`.
 
 <RequestExample>
 ```bash cURL
-curl -X POST https://api.panta.market/api/v1/auth/register/ \
+curl -X POST https://live-api.panta.market/api/v1/auth/register/ \
   -H "Content-Type: application/json" \
   -d '{"email":"you@example.com","password":"a-strong-password","name":"Acme"}'
 ```

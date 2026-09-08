@@ -2,6 +2,7 @@
 title: Refresh token
 description: Rotate a refresh token and obtain a new access token.
 api: POST /auth/token/refresh/
+authMethod: none
 ---
 
 Public endpoint — no API key required. Refresh tokens are **rotated**: the previous refresh token is invalidated.
@@ -21,7 +22,7 @@ Invalid or expired refresh tokens return `401` `{ "code": "UNAUTHORIZED" }`.
 
 <RequestExample>
 ```bash cURL
-curl -X POST https://api.panta.market/api/v1/auth/token/refresh/ \
+curl -X POST https://live-api.panta.market/api/v1/auth/token/refresh/ \
   -H "Content-Type: application/json" \
   -d '{"refresh":"<jwt>"}'
 ```

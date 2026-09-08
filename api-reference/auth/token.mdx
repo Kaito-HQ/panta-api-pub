@@ -2,6 +2,7 @@
 title: Login
 description: Exchange email and password for access + refresh JWTs.
 api: POST /auth/token/
+authMethod: none
 ---
 
 Public endpoint — no API key required. Response envelope matches [Register](/api-reference/auth/register).
@@ -17,7 +18,7 @@ Invalid credentials return `401` `{ "code": "UNAUTHORIZED" }`. Suspended account
 
 <RequestExample>
 ```bash cURL
-curl -X POST https://api.panta.market/api/v1/auth/token/ \
+curl -X POST https://live-api.panta.market/api/v1/auth/token/ \
   -H "Content-Type: application/json" \
   -d '{"email":"you@example.com","password":"a-strong-password"}'
 ```

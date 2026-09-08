@@ -9,16 +9,18 @@ Register (or log in) to get a JWT, then mint a key:
 
 ```bash
 # Signup
-curl -sS -X POST https://api.panta.market/api/v1/auth/register/ \
+curl -sS -X POST https://live-api.panta.market/api/v1/auth/register/ \
   -H "Content-Type: application/json" \
   -d '{"email":"you@example.com","password":"a-strong-password","name":"Acme"}'
 
 # Create a test key (use access from the response)
-curl -sS -X POST https://api.panta.market/api/v1/account/keys/ \
+curl -sS -X POST https://live-api.panta.market/api/v1/account/keys/ \
   -H "Authorization: Bearer <access>" \
   -H "Content-Type: application/json" \
   -d '{"env":"test","name":"ci"}'
 ```
+
+Or use **Try it** on the [Register](/api-reference/auth/register) and [Create API key](/api-reference/account/create-key) pages (playground → production `live-api.panta.market`).
 
 Keys look like:
 
@@ -36,7 +38,7 @@ See [Authentication](/guides/authentication) and [Create API key](/api-reference
 Authenticated routes accept `X-Api-Key` **or** `Authorization: Bearer <access>`. Prefer the API key for product calls. Trailing slashes are required.
 
 ```bash
-curl -sS https://api.panta.market/api/v1/account/ \
+curl -sS https://live-api.panta.market/api/v1/account/ \
   -H "X-Api-Key: pk_test_…"
 ```
 

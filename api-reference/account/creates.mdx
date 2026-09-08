@@ -1,0 +1,50 @@
+---
+title: List creates
+description: Create-flow rows for the authenticated account (includes eventPda / market ids).
+api: GET /account/creates/
+---
+
+Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
+
+Prefer [`GET /markets/?createdBy=me`](/api-reference/markets/list) for catalog DTOs of markets you created. This endpoint returns create-session metrics (`pending`, `registered`, …).
+
+<ParamField query="limit" type="integer" default="50">
+  Max rows (capped at `200`).
+</ParamField>
+<ParamField query="status" type="string">
+  Optional create status filter (`pending`, `registered`, …).
+</ParamField>
+
+<ResponseField name="summary" type="object">
+  Create totals (`total`, `byStatus`).
+</ResponseField>
+<ResponseField name="items" type="array">
+  Create rows: `createId`, `wallet`, `eventPda`, `signature`, `status`, `paymentUsdc`, `createdAt`, `updatedAt`.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl "https://live-api.panta.market/api/v1/account/creates/?limit=50&status=registered" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "summary": { "total": 1, "byStatus": { "registered": 1 } },
+  "items": [
+    {
+      "createId": "cr_…",
+      "eventPda": "…",
+      "status": "registered",
+      "wallet": "…",
+      "signature": "…",
+      "paymentUsdc": "50000000",
+      "createdAt": "2026-09-04T12:00:00.000000Z",
+      "updatedAt": "2026-09-04T12:05:00.000000Z"
+    }
+  ]
+}
+```
+</ResponseExample>

@@ -12,6 +12,21 @@ One account owns both login (JWT) and API keys. On authenticated routes, send **
 
 Prefer `X-Api-Key` for server-to-server product calls (create → buy → trades). JWT is fine for dashboards and the same product routes when a user session is available.
 
+## Try it in these docs
+
+API reference pages include Mintlify’s interactive playground, pointed at **production**:
+
+`https://live-api.panta.market/api/v1`
+
+Suggested path:
+
+1. [Register](/api-reference/auth/register) or [Login](/api-reference/auth/token) → **Send** (no auth header).
+2. Copy `access` from the response.
+3. [Create API key](/api-reference/account/create-key) → paste the access token into **Authorization** (Bearer) → **Send**. Copy the one-time `secret` (`pk_test_…`).
+4. On any other endpoint (for example [Get account](/api-reference/account/get)), paste that secret into **Authorization** (`X-Api-Key`) → **Send**.
+
+Playground traffic is proxied by Mintlify, so you do not need CORS changes. Trailing slashes are already in each path.
+
 ## Signup, login, refresh
 
 | Endpoint | Purpose |
@@ -25,14 +40,14 @@ Typical flow: register or log in → [`POST /account/keys/`](/api-reference/acco
 ## Headers
 
 ```bash
-curl https://api.panta.market/api/v1/account/ \
+curl https://live-api.panta.market/api/v1/account/ \
   -H "X-Api-Key: pk_test_…"
 ```
 
 Or with a signup JWT:
 
 ```bash
-curl https://api.panta.market/api/v1/account/ \
+curl https://live-api.panta.market/api/v1/account/ \
   -H "Authorization: Bearer <access>"
 ```
 

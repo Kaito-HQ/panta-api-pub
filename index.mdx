@@ -8,8 +8,19 @@ description: Build Permissionless Prediction Markets Using Our Native API — qu
 You never custody wallets. Panta returns unsigned transactions (or instruction lists). The user’s wallet signs. You broadcast on **your** RPC, then tell Panta the signature.
 
 <Info>
-Base path: `https://{host}/api/v1`. Trailing slashes are required. Authenticate with `X-Api-Key` **or** `Authorization: Bearer <access>` ([Authentication](/guides/authentication)).
+Trailing slashes are required. Authenticate with `X-Api-Key` **or** `Authorization: Bearer <access>` ([Authentication](/guides/authentication)).
 </Info>
+
+## Environments
+
+| Environment | Base URL |
+| --- | --- |
+| Production | `https://live-api.panta.market/api/v1` |
+| Staging | `https://staging-api.panta.market/api/v1` |
+| Development | `https://dev-api.panta.market/api/v1` |
+| Test | `https://test-api.panta.market/api/v1` |
+
+Examples in this site use the **production** host unless noted. API reference pages have an interactive **Try it** playground against that host — see [Authentication](/guides/authentication#try-it-in-these-docs).
 
 ## What you can do
 
@@ -72,5 +83,8 @@ Panta cooks the transaction. The user signs. You file it on-chain. Then you send
   </Card>
   <Card title="How it works" icon="diagram-project" href="/guides/how-it-works">
     Quote → build → sign → broadcast → confirm.
+  </Card>
+  <Card title="Terms of Use" icon="scale-balanced" href="/guides/terms-of-use">
+    Public API Terms — credentials, attribution, and permitted use.
   </Card>
 </CardGroup>
