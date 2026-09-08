@@ -136,7 +136,8 @@
             "group": "Positions and claims",
             "pages": [
               "api-reference/positions",
-              "api-reference/claims/build"
+              "api-reference/claims/build",
+              "api-reference/claims/creator-fees"
             ]
           },
           {

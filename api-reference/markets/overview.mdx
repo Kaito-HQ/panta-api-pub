@@ -32,5 +32,5 @@ Requires `canCreateMarkets: true` on the account (default on signup). Otherwise 
 Sessions last about 5 minutes. Rebuild if the blockhash expires (~60s). Do not change instruction accounts or fee amounts.
 
 <Info>
-Every quote needs a catalog `imageUrl` on a host your product can display (e.g. Cloudinary via the [image upload](/api-reference/markets/image-upload) helper). **1024×1024** square is recommended. Optional: `region`, `oracle`, and `eventInProgress` (breaking only).
+Every quote needs a catalog `imageUrl` on a host your product can display (e.g. Cloudinary via the [image upload](/api-reference/markets/image-upload) helper). **1024×1024** square is recommended. `startTime` must honor on-chain `minimumStartDelay` (typically 1 hour ahead) unless `eventInProgress` is set on a breaking market. Optional: `region`, `oracle`.
 </Info>

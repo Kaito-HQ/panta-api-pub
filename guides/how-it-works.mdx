@@ -34,7 +34,9 @@ sequenceDiagram
 
 Sessions (`createId`) last about **5 minutes**. Rebuild if the blockhash expires (~60s). Do not edit accounts or fee amounts; register checks the chain against the quote.
 
-Creating a market requires a public catalog `imageUrl` (recommended **1024×1024** square). Soft-validated URL rules — see [Quote a market](/api-reference/markets/quote). Optional fields include `region`, `oracle`, and (for breaking markets) `eventInProgress`.
+Creating a market requires a public catalog `imageUrl` (recommended **1024×1024** square). Soft-validated URL rules — see [Quote a market](/api-reference/markets/quote). Optional helper: [image upload](/api-reference/markets/image-upload). Optional fields include `region`, `oracle`, and (for breaking markets) `eventInProgress`.
+
+`startTime` must respect on-chain `minimumStartDelay` (typically **3600s** ahead of now) unless `eventInProgress` is set on a breaking market.
 
 ## Primary buy
 
@@ -52,15 +54,24 @@ Optional `userId` / `X-User-Id` on quote and build ties the order to an attribut
 
 If the curve moved more than `maxSlippageBps` between quote and build, you get `QUOTE_STALE` — requote.
 
+## Claims
+
+| Flow | Endpoint | After broadcast |
+| --- | --- | --- |
+| Win claim | [`POST /claim/build/`](/api-reference/claims/build) | Optional [`POST /trades/`](/api-reference/trades/report) (`kind: claim`) |
+| Creator fees | [`POST /claim/creator-fees/build/`](/api-reference/claims/creator-fees) | Done — do **not** report via `/trades/` |
+
+Both return instruction lists + `recentBlockhash` (same compile → sign → broadcast pattern as primary buy).
+
 ## What Panta verifies
 
-On register / trade report, verification is fail-closed: the transaction must exist, succeed, include the expected wallet, market, and program, and match quoted fees where applicable.
+On register / trade report, verification is fail-closed: the transaction must exist, succeed, include the expected wallet, market, and program, and match quoted fees where applicable. Trade report accepts **primary buys** and **win claims** only.
 
 | Code | Meaning |
 | --- | --- |
 | `TX_NOT_FOUND` | Signature not seen at the required commitment |
 | `TX_FAILED` | On-chain error |
-| `TX_MISMATCH` | Wrong wallet, market, or program |
+| `TX_MISMATCH` | Wrong wallet, market, program, or unsupported instruction (e.g. creator-fee claim on `/trades/`) |
 | `TX_FEE_MISMATCH` | Amount does not match the quote |
 
 ## Safe retries

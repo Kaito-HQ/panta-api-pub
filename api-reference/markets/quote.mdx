@@ -37,10 +37,10 @@ Do not pass data URLs, short-lived signed URLs, or private buckets. Soft validat
   One of `sports`, `crypto`, `politics`, `entertainment`, `finance`, `science`, `world`, `other`.
 </ParamField>
 <ParamField body="startTime" type="integer" required>
-  Unix seconds. Must satisfy `startTime < endTime ≤ resolutionTime`.
+  Unix seconds. Must satisfy `startTime < endTime ≤ resolutionTime`. Unless `eventInProgress` is true on a breaking market, `startTime` must be at least on-chain `minimumStartDelay` ahead of now (typically **3600** seconds).
 </ParamField>
 <ParamField body="endTime" type="integer" required>
-  Unix seconds.
+  Unix seconds. When `eventInProgress` is true (breaking only), `endTime` must still be in the future.
 </ParamField>
 <ParamField body="resolutionTime" type="integer" required>
   Unix seconds.
@@ -52,7 +52,7 @@ Do not pass data URLs, short-lived signed URLs, or private buckets. Soft validat
   `standard` (default) or `breaking`.
 </ParamField>
 <ParamField body="eventInProgress" type="boolean">
-  Allowed only when `marketType` is `breaking`.
+  Allowed only when `marketType` is `breaking`. Skips the `minimumStartDelay` check on `startTime`; still requires `endTime` in the future. Do not set this with a future `startTime` on standard markets.
 </ParamField>
 <ParamField body="title" type="string">
   Defaults to `question`.

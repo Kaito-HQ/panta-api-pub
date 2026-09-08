@@ -64,13 +64,13 @@ A successful response looks like:
     [List](/api-reference/markets/list) → [get detail](/api-reference/markets/get) → optional [market trades](/api-reference/markets/trades).
   </Step>
   <Step title="Create a market">
-    [Quote](/api-reference/markets/quote) → [build](/api-reference/markets/build) → wallet signs → you broadcast → [register](/api-reference/markets/register).
+    Optional [image upload](/api-reference/markets/image-upload) → [quote](/api-reference/markets/quote) → [build](/api-reference/markets/build) → wallet signs → you broadcast → [register](/api-reference/markets/register).
   </Step>
   <Step title="Buy primary shares">
     [Quote](/api-reference/orders/quote) → [build](/api-reference/orders/build) → compile + sign → broadcast → [submit](/api-reference/orders/submit) / [verify](/api-reference/orders/verify).
   </Step>
   <Step title="Read and claim">
-    [Positions](/api-reference/positions) for a wallet. When `claimable` is true, [build a claim](/api-reference/claims/build). Optionally [report the trade](/api-reference/trades/report).
+    [Positions](/api-reference/positions) for a wallet. When `claimable` is true, [build a win claim](/api-reference/claims/build) and optionally [report the trade](/api-reference/trades/report). Market creators can [claim creator fees](/api-reference/claims/creator-fees) after graduation (not reported via `/trades/`).
   </Step>
 </Steps>
 

@@ -1,13 +1,15 @@
 ---
-title: Build claim
-description: Unsigned claim instructions for a resolved market when the wallet holds winning shares.
+title: Build win claim
+description: Unsigned claim_win_usdc instructions for a resolved market when the wallet holds winning shares.
 api: POST /claim/build/
 authMethod: "key"
 ---
 
 Use [List positions](/api-reference/positions) to check `claimable` first. This endpoint re-validates eligibility on-chain and fails closed if preconditions are not met.
 
-Compile a versioned transaction from `instructions` and `recentBlockhash`, sign with `wallet`, then broadcast.
+For market **creator fees** (graduated markets), use [Claim creator fees](/api-reference/claims/creator-fees) instead.
+
+Compile a versioned transaction from `instructions` and `recentBlockhash`, sign with `wallet`, then broadcast. Optionally [report the trade](/api-reference/trades/report) for volume attribution (`kind: claim`).
 
 <ParamField body="wallet" type="string" required>
   Claimant and transaction signer.
