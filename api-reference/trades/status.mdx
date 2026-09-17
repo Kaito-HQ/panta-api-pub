@@ -2,8 +2,12 @@
 title: Trade status
 description: Attribution or confirmation status for a signature.
 api: GET /trades/{signature}/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Responses do not expose another account’s private attribution fields.
 

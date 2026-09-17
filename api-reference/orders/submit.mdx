@@ -2,8 +2,12 @@
 title: Submit primary buy
 description: Register the broadcast signature for asynchronous confirmation. Does not wait for finalization.
 api: POST /primaryordersubmit/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Repeating the same `orderId` and `signature` is safe to retry.
 

@@ -2,8 +2,12 @@
 title: List positions
 description: USDC market holdings for a wallet — shares, phase, and claim eligibility.
 api: GET /positions/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Indexer balances may lag the chain briefly after a purchase. Result sets are capped (typically 200 rows). When `claimable` is `true`, use [Build win claim](/api-reference/claims/build). Creator fees use a separate path: [Claim creator fees](/api-reference/claims/creator-fees).
 

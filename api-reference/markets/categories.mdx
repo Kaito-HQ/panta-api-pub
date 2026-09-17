@@ -2,8 +2,12 @@
 title: Categories
 description: Allowlist of market categories for create and list filters.
 api: GET /categories/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 

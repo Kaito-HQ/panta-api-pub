@@ -2,8 +2,12 @@
 title: Quote a market
 description: Validate parameters, soft-check the catalog image URL, reserve a create session, and return the USDC creation fee.
 api: POST /markets/create/quote/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Fee amounts are USDC **base units** (integer strings, 6 decimals). `paymentUsdc` in the request is ignored; the fee comes from on-chain config.
 

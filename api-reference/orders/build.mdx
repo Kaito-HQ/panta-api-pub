@@ -2,8 +2,12 @@
 title: Build primary buy
 description: Construct unsigned primary_order_usdc instructions from a live quote.
 api: POST /primaryorderbuild/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Rejected if the curve has moved beyond `maxSlippageBps` (`QUOTE_STALE`). Compile a versioned transaction from `instructions` and `recentBlockhash`, sign with `wallet`, then broadcast.
 

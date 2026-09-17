@@ -2,8 +2,12 @@
 title: Report trade
 description: Verify an on-chain primary buy or win claim and upsert attribution keyed by signature.
 api: POST /trades/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 This is not a full market trade history. Primary-buy transactions that include an attribution memo may be ingested automatically; this endpoint is the explicit reporting path. Repeated calls with the same signature are idempotent.
 

@@ -2,8 +2,12 @@
 title: Build win claim
 description: Unsigned claim_win_usdc instructions for a resolved market when the wallet holds winning shares.
 api: POST /claim/build/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Use [List positions](/api-reference/positions) to check `claimable` first. This endpoint re-validates eligibility on-chain and fails closed if preconditions are not met.
 

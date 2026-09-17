@@ -2,8 +2,12 @@
 title: Claim creator fees
 description: Unsigned claim_creator_fees_usdc instructions for the creator of a graduated market with accumulated fees.
 api: POST /claim/creator-fees/build/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Separate from [Build win claim](/api-reference/claims/build) (`POST /claim/build/`), which redeems winning shares.
 

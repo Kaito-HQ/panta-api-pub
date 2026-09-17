@@ -2,8 +2,12 @@
 title: Verify primary buy
 description: Return current order status. Optional signature association without blocking on confirmation.
 api: POST /primaryorderverify/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 <ParamField body="orderId" type="string" required>
   From build.

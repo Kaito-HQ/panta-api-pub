@@ -2,8 +2,12 @@
 title: List creates
 description: Create-flow rows for the authenticated account (includes eventPda / market ids).
 api: GET /account/creates/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Accepts `X-Api-Key` or `Authorization: Bearer <access>`.
 

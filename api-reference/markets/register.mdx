@@ -2,8 +2,12 @@
 title: Register market
 description: Verify the confirmed on-chain create and write catalog / oracle metadata.
 api: POST /markets/register/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Verification is fail-closed (transaction presence and success, program, accounts, fee match). Repeating the same `createId` and `signature` is idempotent. After success, `createId` cannot register a different signature.
 

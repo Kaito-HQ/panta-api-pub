@@ -2,8 +2,12 @@
 title: Upload market image
 description: Request a scoped Cloudinary signature, then upload image bytes directly to Cloudinary for use as imageUrl.
 api: POST /markets/create/image-upload/
-authMethod: "key"
+authMethod: "none"
 ---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
 
 Optional helper when you do not host images yourself. Image **bytes never pass through Panta** — only a short-lived signed upload form is returned.
 

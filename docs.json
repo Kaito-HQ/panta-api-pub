@@ -46,11 +46,7 @@
       "autogenerate": true
     },
     "mdx": {
-      "server": "https://live-api.panta.market/api/v1",
-      "auth": {
-        "method": "key",
-        "name": "X-Api-Key"
-      }
+      "server": "https://live-api.panta.market/api/v1"
     }
   },
   "navigation": {
