@@ -105,7 +105,12 @@
               "api-reference/markets/get",
               "api-reference/markets/trades",
               "api-reference/markets/categories",
-              "api-reference/markets/wallet-trades",
+              "api-reference/markets/wallet-trades"
+            ]
+          },
+          {
+            "group": "Panta intelligence",
+            "pages": [
               "api-reference/markets/resolution-summary"
             ]
           },
