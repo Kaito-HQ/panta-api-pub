@@ -1,0 +1,60 @@
+---
+title: Submit dispute
+description: Verify the broadcast dispute signature and record the dispute.
+api: POST /markets/{marketId}/dispute/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Call after the signature is `confirmed`. The server checks the signature on-chain, then records the dispute. Sending the same signature again returns the current status and does not create a second dispute.
+
+<ParamField path="marketId" type="string" required>
+  Event / market address. Must match the build.
+</ParamField>
+<ParamField body="disputeId" type="string" required>
+  From [build](/api-reference/disputes/build).
+</ParamField>
+<ParamField body="wallet" type="string" required>
+  Must match the build wallet and the transaction signer.
+</ParamField>
+<ParamField body="signature" type="string" required>
+  Base58 signature from `sendRawTransaction`.
+</ParamField>
+
+<ResponseField name="status" type="string">
+  `pending` means the signature is not confirmed yet: wait and POST the same body again. `accepted` means the bond was verified and the review is open.
+</ResponseField>
+
+`TX_FAILED`, `TX_MISMATCH`, and `TX_FEE_MISMATCH` mean this signature is not the dispute transaction from build. They do not open a dispute.
+
+`INTERNAL_ERROR` with HTTP 503 means a dependency failed. Retry the same body.
+
+Errors: `UNAUTHORIZED` · `MARKET_NOT_FOUND` · `TX_FAILED` · `TX_MISMATCH` · `TX_FEE_MISMATCH` · `DUPLICATE_DISPUTE` · `INVALID_MARKET_PARAMS` · `INTERNAL_ERROR` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://live-api.panta.market/api/v1/markets/EventPda11111111111111111111111111111/dispute/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "disputeId": "ds_abc123",
+    "wallet": "Disputer1111111111111111111111111111111",
+    "signature": "5VEJv1R…base58Signature"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "marketId": "EventPda11111111111111111111111111111",
+  "status": "accepted",
+  "submittedAt": "2026-10-12T10:00:00Z",
+  "resolvedAt": null,
+  "outcome": null
+}
+```
+</ResponseExample>

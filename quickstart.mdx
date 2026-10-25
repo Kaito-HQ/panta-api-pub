@@ -69,6 +69,12 @@ A successful response looks like:
   <Step title="Buy primary shares">
     [Quote](/api-reference/orders/quote) → [build](/api-reference/orders/build) → compile + sign → broadcast → [submit](/api-reference/orders/submit) / [verify](/api-reference/orders/verify).
   </Step>
+  <Step title="Trade secondary">
+    After graduation, [read the book](/api-reference/orders/secondary-listings), [list](/api-reference/orders/secondary-list) or [bid](/api-reference/orders/secondary-bid), then [fill](/api-reference/orders/secondary-fill) or [cancel](/api-reference/orders/secondary-cancel). Report a confirmed fill with `quoteId` set to the fill `orderId`.
+  </Step>
+  <Step title="Dispute and resolution">
+    [Build a dispute](/api-reference/disputes/build) while the oracle window is open. Read insights, sources, and the settled write-up from [market intelligence](/api-reference/markets/resolution-summary).
+  </Step>
   <Step title="Read and claim">
     [Positions](/api-reference/positions) for a wallet. When `claimable` is true, [build a win claim](/api-reference/claims/build) and optionally [report the trade](/api-reference/trades/report). Market creators can [claim creator fees](/api-reference/claims/creator-fees) after graduation (not reported via `/trades/`).
   </Step>

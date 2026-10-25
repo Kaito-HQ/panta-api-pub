@@ -16,7 +16,7 @@ Opens at the URL Mintlify prints (usually `http://localhost:3000`).
 | --- | --- |
 | `docs.json` | Site config, branding, navigation, API playground |
 | `index.mdx`, `quickstart.mdx`, `guides/` | Product + integration guides |
-| `api-reference/` | One page per HTTP endpoint |
+| `api-reference/` | One page per HTTP endpoint, including secondary, disputes, and resolution summary |
 | `logo/`, `favicon.svg` | Brand assets |
 
 ## Source of truth

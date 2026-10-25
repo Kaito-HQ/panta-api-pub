@@ -1,0 +1,64 @@
+---
+title: Cancel an order
+description: Build an unsigned transaction that cancels the caller's open bid or ask.
+api: POST /secondary/cancel/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Cancels the caller's open bid or ask. Another wallet receives `403` `FORBIDDEN`. If the order was partially filled, the transaction releases the remainder. Cancel transactions are not volume.
+
+<ParamField body="wallet" type="string" required>
+  Order owner.
+</ParamField>
+<ParamField body="marketId" type="string" required>
+  Event / market address.
+</ParamField>
+<ParamField body="listingId" type="string" required>
+  Open bid or ask owned by `wallet`.
+</ParamField>
+
+<ResponseField name="shares" type="string">
+  Remaining size that will be released.
+</ResponseField>
+<ResponseField name="instructions" type="array">
+  Unsigned cancel instructions.
+</ResponseField>
+
+Errors: `INVALID_MARKET_PARAMS` · `MARKET_NOT_FOUND` · `MARKET_NOT_IN_SECONDARY` · `ORDER_NOT_FOUND` · `ORDER_NOT_ACTIVE` · `FORBIDDEN` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://live-api.panta.market/api/v1/secondary/cancel/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Seller11111111111111111111111111111111",
+    "marketId": "EventPda11111111111111111111111111111",
+    "listingId": "Listing1111111111111111111111111111111"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "orderId": "sec_…",
+  "wallet": "Seller11111111111111111111111111111111",
+  "marketId": "EventPda11111111111111111111111111111",
+  "side": "yes",
+  "price": "0.42",
+  "shares": "6.00",
+  "listingId": "Listing1111111111111111111111111111111",
+  "status": "built",
+  "instructions": [],
+  "recentBlockhash": "…",
+  "lastValidBlockHeight": 123,
+  "expiresAt": "2026-10-15T12:00:00Z",
+  "blockhashExpiryHintSec": 60
+}
+```
+</ResponseExample>

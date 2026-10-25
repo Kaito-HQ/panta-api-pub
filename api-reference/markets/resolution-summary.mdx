@@ -1,0 +1,150 @@
+---
+title: Market intelligence
+description: Current-phase intelligence (insights, historical context, sources) and, after settlement, the resolution summary.
+api: GET /markets/{marketId}/resolution-summary/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+One route returns **Panta intelligence** for the phase the market is in now, and the **resolution summary** once the account has settled. This is not [dispute status](/api-reference/disputes/status).
+
+There is no separate intelligence URL. `phase` decides which report you get. Open markets return intelligence only. Ended markets add the resolution summary.
+
+Auth matches [Get market](/api-reference/markets/get). Read rate-limit tier. A `pk_test_` key returns a sandbox body with `status: "pending"`, `phase: "created"`, and a test-mode disclaimer.
+
+The response does not include confidence scores or internal model fields.
+
+<ParamField path="marketId" type="string" required>
+  Event / market address (base58).
+</ParamField>
+
+## Phase
+
+`phase` is chosen from the on-chain market account. Only that phase's report is returned. Poll again when the market crosses the midpoint or settles.
+
+| `phase` | When |
+| --- | --- |
+| `created` | Before the midpoint of `startTime` and `endTime` |
+| `mid_market` | From that midpoint until the account settles |
+| `post_resolution` | After the account is settled |
+
+## Intelligence
+
+Show these fields for every phase, including markets that are still open:
+
+| Field | Use |
+| --- | --- |
+| `phase` | `created`, `mid_market`, or `post_resolution` |
+| `status` | `pending` until this phase's report is stored, then `ready` |
+| `insights` | Short observations |
+| `historicalContext` | Background. Null when none is stored |
+| `sources` | `title`, `publisher`, `url`, `publicationDate`, `explanation` |
+| `bullishFactors` | Factors supporting yes |
+| `bearishFactors` | Factors against yes |
+| `risks` | Caveats |
+| `analysisDisclaimer` | Informational disclaimer |
+| `updatedAt` | When this phase's report was last stored |
+
+An unresolved market with no stored analysis returns only `marketId`, `status: "pending"`, and `phase`. A ready report before settlement includes the intelligence fields with `outcome` and `resolvedAt` null.
+
+## Resolution summary
+
+Show this block only when `phase` is `post_resolution`:
+
+| Field | Use |
+| --- | --- |
+| `outcome` | `yes` or `no` |
+| `resolvedAt` | When the market account settled |
+| `headline` | Short title |
+| `summary` | The resolution write-up |
+
+`status` stays `pending` until that post-resolution write-up exists, then `ready`. `outcome` and `resolvedAt` are included once the account has settled, even if the write-up is still pending. Do not mix `insights` or `sources` into the resolution block.
+
+<ResponseField name="status" type="string">
+  `pending` until this phase's report is stored, then `ready`.
+</ResponseField>
+<ResponseField name="phase" type="string">
+  `created`, `mid_market`, or `post_resolution`.
+</ResponseField>
+<ResponseField name="outcome" type="string">
+  `yes` or `no`. Omitted while the market is unresolved. Null on a ready pre-settlement report.
+</ResponseField>
+<ResponseField name="resolvedAt" type="string">
+  ISO-8601 UTC time the market account settled. Distinct from `updatedAt`.
+</ResponseField>
+<ResponseField name="headline" type="string">
+  Short title for this phase's report.
+</ResponseField>
+<ResponseField name="summary" type="string">
+  Resolution write-up. Show only when `phase` is `post_resolution`.
+</ResponseField>
+<ResponseField name="insights" type="array">
+  Short observations for this phase.
+</ResponseField>
+<ResponseField name="historicalContext" type="string">
+  Background for this phase. Null when none is stored.
+</ResponseField>
+<ResponseField name="bullishFactors" type="array">
+  Factors supporting the outcome or the yes side.
+</ResponseField>
+<ResponseField name="bearishFactors" type="array">
+  Factors against the outcome or the yes side.
+</ResponseField>
+<ResponseField name="risks" type="array">
+  Caveats for this phase.
+</ResponseField>
+<ResponseField name="sources" type="array">
+  Each source has `title`, `publisher`, `url`, `publicationDate`, and `explanation`.
+</ResponseField>
+<ResponseField name="analysisDisclaimer" type="string">
+  Informational disclaimer for the report.
+</ResponseField>
+<ResponseField name="updatedAt" type="string">
+  When this phase's written analysis was last stored.
+</ResponseField>
+
+| HTTP | `code` | When |
+| --- | --- | --- |
+| 400 | `INVALID_MARKET_PARAMS` | `marketId` is not a Solana address |
+| 404 | `MARKET_NOT_FOUND` | No public USDC market for that address |
+| 503 | `INTERNAL_ERROR` | The catalog, chain, or analysis store could not be reached. Retry. |
+
+<RequestExample>
+```bash cURL
+curl "https://live-api.panta.market/api/v1/markets/EventPda11111111111111111111111111111/resolution-summary/" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "marketId": "EventPda11111111111111111111111111111",
+  "status": "ready",
+  "phase": "post_resolution",
+  "outcome": "yes",
+  "resolvedAt": "2026-10-16T11:00:00Z",
+  "headline": "Market resolved YES",
+  "summary": "The reported result matched the resolution criteria.",
+  "insights": ["Volume concentrated near resolution."],
+  "bullishFactors": ["Primary source confirmed the outcome."],
+  "bearishFactors": [],
+  "historicalContext": null,
+  "risks": ["Source coverage was thin."],
+  "sources": [
+    {
+      "title": "Official result",
+      "publisher": "League",
+      "url": "https://example.com/result",
+      "publicationDate": "2026-10-16",
+      "explanation": "Primary resolution source."
+    }
+  ],
+  "analysisDisclaimer": "Informational only.",
+  "updatedAt": "2026-10-16T12:00:00Z"
+}
+```
+</ResponseExample>

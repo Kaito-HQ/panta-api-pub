@@ -1,0 +1,92 @@
+---
+title: List shares
+description: Build an unsigned transaction that rests YES or NO shares for sale.
+api: POST /secondary/list/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Sells shares the wallet already holds. The market must be graduated and still active. `price` must sit inside the allowed range. The response `intent` is `sell`.
+
+<ParamField body="wallet" type="string" required>
+  Lister wallet (base58).
+</ParamField>
+<ParamField body="marketId" type="string" required>
+  Event / market address.
+</ParamField>
+<ParamField body="side" type="string" required>
+  `yes` or `no`.
+</ParamField>
+<ParamField body="price" type="string" required>
+  USDC per share. Must be greater than 0 and less than 1.
+</ParamField>
+<ParamField body="shares" type="string" required>
+  Shares to list. Greater than 0 and at most the wallet's free balance on `side`.
+</ParamField>
+<ParamField body="userId" type="string">
+  Attribution id. May also be sent as `X-User-Id`.
+</ParamField>
+
+<ResponseField name="orderId" type="string">
+  `sec_…` id for this built transaction.
+</ResponseField>
+<ResponseField name="listingId" type="string">
+  New ask. It appears on [`GET /secondary/listings/`](/api-reference/orders/secondary-listings) after the transaction confirms. Use it to cancel.
+</ResponseField>
+<ResponseField name="intent" type="string">
+  `sell`.
+</ResponseField>
+<ResponseField name="instructions" type="array">
+  Unsigned instructions. Compile them with `recentBlockhash`, then sign and broadcast.
+</ResponseField>
+<ResponseField name="recentBlockhash" type="string">
+  Blockhash for the versioned transaction.
+</ResponseField>
+<ResponseField name="lastValidBlockHeight" type="number">
+  Pass this to `confirmTransaction`.
+</ResponseField>
+<ResponseField name="blockhashExpiryHintSec" type="number">
+  About 60 seconds.
+</ResponseField>
+
+Errors: `INVALID_MARKET_PARAMS` · `INVALID_PRICE` · `MARKET_NOT_FOUND` · `MARKET_NOT_IN_SECONDARY` · `INSUFFICIENT_SHARES` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://live-api.panta.market/api/v1/secondary/list/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Seller11111111111111111111111111111111",
+    "marketId": "EventPda11111111111111111111111111111",
+    "side": "yes",
+    "price": "0.42",
+    "shares": "10.00",
+    "userId": "usr_acme"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "orderId": "sec_…",
+  "wallet": "Seller11111111111111111111111111111111",
+  "marketId": "EventPda11111111111111111111111111111",
+  "side": "yes",
+  "price": "0.42",
+  "shares": "10.00",
+  "listingId": "Listing1111111111111111111111111111111",
+  "intent": "sell",
+  "status": "built",
+  "instructions": [],
+  "recentBlockhash": "…",
+  "lastValidBlockHeight": 123,
+  "expiresAt": "2026-10-15T12:00:00Z",
+  "blockhashExpiryHintSec": 60
+}
+```
+</ResponseExample>

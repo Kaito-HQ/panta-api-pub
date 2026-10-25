@@ -1,6 +1,6 @@
 ---
 title: Report trade
-description: Verify an on-chain primary buy or win claim and upsert attribution keyed by signature.
+description: Verify an on-chain primary buy, secondary fill, or win claim and upsert attribution keyed by signature.
 api: POST /trades/
 authMethod: "none"
 ---
@@ -11,10 +11,13 @@ authMethod: "none"
 
 This is not a full market trade history. Primary-buy transactions that include an attribution memo may be ingested automatically; this endpoint is the explicit reporting path. Repeated calls with the same signature are idempotent.
 
-Verification is fail-closed. The transaction must invoke the USDC program and be either:
+Verification is fail-closed. The transaction must invoke the USDC program and be one of:
 
-- `primary_order_usdc` (buy), or
+- `primary_order_usdc` (buy)
+- `secondary_limit_order_usdc` that filled an open order (`kind` `secondary`)
 - `claim_win_usdc` (win claim from [`POST /claim/build/`](/api-reference/claims/build))
+
+A secondary report must set `quoteId` to the fill `orderId` (`sec_…`). The stored amount is the matched notional only. Listing and cancel transactions are not volume. A secondary report with no matches returns `TX_MISMATCH`.
 
 [Creator fee claims](/api-reference/claims/creator-fees) (`claim_creator_fees_usdc`) are **not** attributable here — reporting them returns `TX_MISMATCH`.
 
@@ -28,7 +31,7 @@ Verification is fail-closed. The transaction must invoke the USDC program and be
   Event / market address.
 </ParamField>
 <ParamField body="quoteId" type="string">
-  Primary quote id when available.
+  Primary quote id when available. Required for a secondary fill: the fill `orderId` (`sec_…`).
 </ParamField>
 <ParamField body="clientOrderId" type="string">
   Client-supplied reference.
@@ -41,7 +44,7 @@ Verification is fail-closed. The transaction must invoke the USDC program and be
   `processed` when attribution is stored.
 </ResponseField>
 <ResponseField name="kind" type="string">
-  `buy` (primary order) or `claim` (win claim only).
+  `buy` (primary order), `secondary` (filled secondary order), or `claim` (win claim only).
 </ResponseField>
 <ResponseField name="side" type="string">
   `yes` or `no` when applicable.

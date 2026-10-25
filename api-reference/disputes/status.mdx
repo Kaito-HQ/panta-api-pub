@@ -1,0 +1,57 @@
+---
+title: Dispute status
+description: Read this account's dispute for one wallet and market.
+api: GET /markets/{marketId}/dispute/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Poll after [submit](/api-reference/disputes/submit). Only this account's dispute for that wallet is returned. Reason, evidence, and other disputants are not included.
+
+<ParamField path="marketId" type="string" required>
+  Event / market address.
+</ParamField>
+<ParamField query="wallet" type="string" required>
+  Disputer wallet from build.
+</ParamField>
+
+<ResponseField name="status" type="string">
+  `pending` — bond transaction is not verified yet. `accepted` — bond verified and the on-chain review is open. `rejected` — the review settled and the disputer's outcome was not adopted. `expired` — the review ended without a settlement.
+</ResponseField>
+<ResponseField name="submittedAt" type="string">
+  ISO-8601 UTC. Null while `pending`.
+</ResponseField>
+<ResponseField name="resolvedAt" type="string">
+  Null until the review settles or expires, and also when the chain has not recorded a settlement time.
+</ResponseField>
+<ResponseField name="outcome" type="string">
+  Final `yes` or `no` once the review settles. Null until then. On `rejected`, this is the adopted outcome.
+</ResponseField>
+
+`INVALID_MARKET_PARAMS` means there is no dispute for this wallet under your account.
+
+`INTERNAL_ERROR` with HTTP 503 means a dependency failed. Retry the same request.
+
+Errors: `UNAUTHORIZED` · `INVALID_MARKET_PARAMS` · `INTERNAL_ERROR` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl "https://live-api.panta.market/api/v1/markets/EventPda11111111111111111111111111111/dispute/?wallet=Disputer1111111111111111111111111111111" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "marketId": "EventPda11111111111111111111111111111",
+  "status": "accepted",
+  "submittedAt": "2026-10-12T10:00:00Z",
+  "resolvedAt": null,
+  "outcome": null
+}
+```
+</ResponseExample>

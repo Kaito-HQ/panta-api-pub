@@ -1,0 +1,90 @@
+---
+title: Rest a bid
+description: Build an unsigned transaction that rests a buy at a chosen price. The buyer needs USDC, not shares.
+api: POST /secondary/bid/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Rests a buy at `price` so another wallet can sell into it. The body matches [list](/api-reference/orders/secondary-list). The buyer must hold at least `maxCostUsdc` USDC. `feeUsdc` is an estimate and is not added to that balance check.
+
+A bid can match existing asks at or below `price`. Size that does not match stays on the book and locks the unused USDC. `listingId` and `orderAccount` are that bid. `intent` is `buy`. Cancel it with [`POST /secondary/cancel/`](/api-reference/orders/secondary-cancel).
+
+<ParamField body="wallet" type="string" required>
+  Buyer wallet (base58). Does not need shares.
+</ParamField>
+<ParamField body="marketId" type="string" required>
+  Graduated event / market address.
+</ParamField>
+<ParamField body="side" type="string" required>
+  `yes` or `no`.
+</ParamField>
+<ParamField body="price" type="string" required>
+  USDC per share. Must be greater than 0 and less than 1.
+</ParamField>
+<ParamField body="shares" type="string" required>
+  Size to rest. The wallet must be able to pay `shares × price` in USDC.
+</ParamField>
+<ParamField body="userId" type="string">
+  Attribution id. May also be sent as `X-User-Id`.
+</ParamField>
+
+<ResponseField name="listingId" type="string">
+  The new bid.
+</ResponseField>
+<ResponseField name="orderAccount" type="string">
+  Same bid. Use it to cancel.
+</ResponseField>
+<ResponseField name="intent" type="string">
+  `buy`.
+</ResponseField>
+<ResponseField name="maxCostUsdc" type="string">
+  USDC locked for this size. The fee is not included.
+</ResponseField>
+<ResponseField name="feeUsdc" type="string">
+  Configured fee estimate.
+</ResponseField>
+
+Errors: `INVALID_MARKET_PARAMS` · `INVALID_PRICE` · `MARKET_NOT_FOUND` · `MARKET_NOT_IN_SECONDARY` · `INSUFFICIENT_USDC` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://live-api.panta.market/api/v1/secondary/bid/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Buyer111111111111111111111111111111111",
+    "marketId": "EventPda11111111111111111111111111111",
+    "side": "yes",
+    "price": "0.42",
+    "shares": "10.00"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "orderId": "sec_…",
+  "wallet": "Buyer111111111111111111111111111111111",
+  "marketId": "EventPda11111111111111111111111111111",
+  "side": "yes",
+  "price": "0.42",
+  "shares": "10.00",
+  "listingId": "Bid11111111111111111111111111111111111",
+  "intent": "buy",
+  "maxCostUsdc": "4.20",
+  "feeUsdc": "0.04",
+  "orderAccount": "Bid11111111111111111111111111111111111",
+  "status": "built",
+  "instructions": [],
+  "recentBlockhash": "…",
+  "lastValidBlockHeight": 123,
+  "expiresAt": "2026-10-15T12:00:00Z",
+  "blockhashExpiryHintSec": 60
+}
+```
+</ResponseExample>

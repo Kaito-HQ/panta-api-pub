@@ -45,7 +45,7 @@ Switch on `code`. Use `message` / `field` / `fields` to show what failed. HTTP s
 | `UNAUTHORIZED` | Any authenticated route | Invalid or missing API key or signup JWT; or wallet does not match the bound session |
 | `EMAIL_TAKEN` | `POST /auth/register/` | Email already registered |
 | `CREATE_NOT_PERMITTED` | Create market | Account has create permission disabled |
-| `FORBIDDEN` | Restricted routes | Operation not allowed |
+| `FORBIDDEN` | Restricted routes, secondary fill / cancel | Authenticated, but the wallet owns the order it is trying to take, or does not own the order it is trying to cancel |
 | `INVALID_MARKET_PARAMS` | Most writes | Malformed fields, invalid pubkeys, illegal times, or unavailable config |
 | `DUPLICATE_MARKET` | Create quote | Creator + question already produce a market |
 | `CREATE_EXPIRED` | Create build / register | `createId` missing, expired, or consumed |
@@ -54,6 +54,17 @@ Switch on `code`. Use `message` / `field` / `fields` to show what failed. HTTP s
 | `AMOUNT_TOO_SMALL` | Primary quote | Amount below minimum fill |
 | `MARKET_NOT_FOUND` | Buy, claim | Event account missing or undecodable |
 | `MARKET_NOT_IN_PRIMARY` | Primary quote | Market is not accepting primary buys |
+| `MARKET_NOT_IN_SECONDARY` | Secondary list, bid, fill, cancel, listings | Market is not graduated, or it is resolved or cancelled |
+| `INSUFFICIENT_SHARES` | Secondary list, fill of a bid | Wallet does not hold enough free shares on that side |
+| `INSUFFICIENT_USDC` | Secondary bid, fill of a sell | Buyer USDC balance is below the share cost |
+| `INVALID_PRICE` | Secondary list, bid | Price is not strictly between 0 and 1 USDC per share, or it misses the market tick |
+| `ORDER_NOT_FOUND` | Secondary fill / cancel | Listing account is missing or is not an order on this market |
+| `ORDER_NOT_ACTIVE` | Secondary fill / cancel | Order is filled, cancelled, or not an open bid or ask |
+| `LISTING_NOT_NEXT` | Secondary fill | A better bid or ask on this side would match before this order |
+| `SHARES_EXCEED_LISTING` | Secondary fill | Requested size is above the listing's remaining shares |
+| `DISPUTE_WINDOW_CLOSED` | Dispute build | Market has not ended, the oracle has not proposed, the market is already resolved or cancelled, or the one-hour dispute window has closed |
+| `NOT_A_SHAREHOLDER` | Dispute build | Wallet does not currently hold YES or NO shares in the market |
+| `DUPLICATE_DISPUTE` | Dispute build / submit | This market already has a dispute |
 | `NOT_CLAIMABLE` | Win claim build | Win-claim preconditions not satisfied |
 | `NOT_MARKET_CREATOR` | Creator-fee claim | Wallet is not the market creator / fee-vault owner |
 | `MARKET_NOT_GRADUATED` | Creator-fee claim | Market has not graduated; fees not claimable yet |
@@ -61,10 +72,10 @@ Switch on `code`. Use `message` / `field` / `fields` to show what failed. HTTP s
 | `UPLOAD_NOT_CONFIGURED` | Image upload | Cloudinary upload signing is unavailable (503) |
 | `TX_NOT_FOUND` | Register, trades | Signature not observed at required commitment |
 | `TX_FAILED` | Register, trades | On-chain transaction failed |
-| `TX_MISMATCH` | Register, trades, buy | Tx does not match expected wallet, market, or program (also: reporting a creator-fee claim to `/trades/`) |
+| `TX_MISMATCH` | Register, trades, buy | Tx does not match the wallet, market, program, or secondary fill session. A secondary report with no matches is rejected. Reporting a creator-fee claim to `/trades/` is also rejected |
 | `TX_FEE_MISMATCH` | Register, trades | On-chain amount does not match quoted fee or size |
 | `RATE_LIMITED` | Any | Client exceeded the rate limit |
-| `INTERNAL_ERROR` | Any | Unexpected server failure |
+| `INTERNAL_ERROR` | Any | Unexpected server failure. Dispute build, submit, and status, and resolution summary, return HTTP 503 when a dependency failed |
 
 ## Rate limits
 
@@ -84,8 +95,8 @@ Defaults per account (and optionally per IP). Deployments may override.
 | `read` | Account, catalog reads | 120 / 60s |
 | `positions` | `GET /positions/` | 60 / 60s |
 | `quote` | Create / primary quote | 30 / 60s |
-| `build` | Create / primary / claim build (win + creator fees) | 20 / 60s |
-| `register` | Register, trade report, submit, auth | 40 / 60s |
+| `build` | Create / primary / secondary / claim build | 20 / 60s |
+| `register` | Register, trade report, primary submit, dispute submit, auth | 40 / 60s |
 | `upload` | `POST /markets/create/image-upload/` | 10 / 60s |
 
 On `429`, honor `Retry-After` and back off with jitter.
@@ -98,3 +109,5 @@ On `429`, honor `Retry-After` and back off with jitter.
 | Build blockhash hint | ~60 seconds |
 | Primary quote (`quoteId`) | ~90 seconds |
 | Primary order (`orderId`) | ~120 seconds |
+| Secondary build blockhash | ~60 seconds |
+| Dispute build blockhash | ~60 seconds |

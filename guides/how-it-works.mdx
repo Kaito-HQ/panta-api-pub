@@ -54,6 +54,30 @@ Optional `userId` / `X-User-Id` on quote and build ties the order to an attribut
 
 If the curve moved more than `maxSlippageBps` between quote and build, you get `QUOTE_STALE` — requote.
 
+## Secondary market
+
+After graduation, the book is USDC bids and asks. See [Secondary market](/api-reference/orders/secondary).
+
+| Action | Endpoint | Who pays |
+| --- | --- | --- |
+| Sell shares you hold | [`POST /secondary/list/`](/api-reference/orders/secondary-list) | Shares |
+| Rest a buy | [`POST /secondary/bid/`](/api-reference/orders/secondary-bid) | USDC. No shares required |
+| Take an open order | [`POST /secondary/fill/`](/api-reference/orders/secondary-fill) | USDC for an ask, shares for a bid |
+| Cancel your order | [`POST /secondary/cancel/`](/api-reference/orders/secondary-cancel) | — |
+| Read the book | [`GET /secondary/listings/`](/api-reference/orders/secondary-listings) | — |
+
+After a fill confirms, report it with [`POST /trades/`](/api-reference/trades/report). `quoteId` must be the fill `orderId`. Listing and cancel are not volume.
+
+## Dispute
+
+After the oracle proposes, and before that proposal is finalized, a shareholder can dispute the opposite side. [Build](/api-reference/disputes/build) returns the unsigned transaction and the USDC bond. Sign, broadcast, then [submit](/api-reference/disputes/submit) the signature. Poll [status](/api-reference/disputes/status). One dispute per market.
+
+## Market intelligence
+
+[`GET /markets/{marketId}/resolution-summary/`](/api-reference/markets/resolution-summary) is the intelligence route. It returns one phase: `created`, `mid_market`, or `post_resolution`.
+
+Intelligence is `insights`, `historicalContext`, `sources`, `bullishFactors`, `bearishFactors`, and `risks`. Open markets return that block only. When `phase` is `post_resolution`, the same response also carries the resolution summary: `outcome`, `resolvedAt`, `headline`, and `summary`. This is not dispute status.
+
 ## Claims
 
 | Flow | Endpoint | After broadcast |
@@ -79,7 +103,7 @@ See [List positions → Estimating position value](/api-reference/positions#esti
 
 ## What Panta verifies
 
-On register / trade report, verification is fail-closed: the transaction must exist, succeed, include the expected wallet, market, and program, and match quoted fees where applicable. Trade report accepts **primary buys** and **win claims** only.
+On register / trade report, verification is fail-closed: the transaction must exist, succeed, include the expected wallet, market, and program, and match quoted fees where applicable. Trade report accepts **primary buys**, **secondary fills** (`quoteId` = fill `orderId`), and **win claims**. Listing, cancel, and creator-fee claims are not volume.
 
 | Code | Meaning |
 | --- | --- |
@@ -95,3 +119,4 @@ On register / trade report, verification is fail-closed: the transaction must ex
 | `POST /markets/register/` | Same `createId` + `signature` |
 | `POST /trades/` | Same `signature` |
 | `POST /primaryordersubmit/` | Same `orderId` + `signature` |
+| `POST /markets/{marketId}/dispute/` | Same `disputeId` + `signature` while `pending` |

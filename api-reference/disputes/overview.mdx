@@ -1,0 +1,29 @@
+---
+title: Dispute a proposal
+description: File a dispute after the oracle proposes an outcome and before that proposal is finalized.
+---
+
+The API builds an unsigned transaction. The wallet signs it. You broadcast it. The same transaction files the dispute and pays the USDC bond.
+
+<Steps>
+  <Step title="Build">
+    [`POST /markets/{marketId}/dispute/build/`](/api-reference/disputes/build) — checks the window, the share balance, and the side, then returns instructions and a `disputeId`.
+  </Step>
+  <Step title="Sign and broadcast">
+    Compile a versioned transaction from `instructions` and `recentBlockhash`. Sign with `wallet`. Send on your RPC. Panta does not broadcast.
+  </Step>
+  <Step title="Submit">
+    [`POST /markets/{marketId}/dispute/`](/api-reference/disputes/submit) after the signature is confirmed.
+  </Step>
+  <Step title="Status">
+    [`GET /markets/{marketId}/dispute/?wallet=`](/api-reference/disputes/status) — this account's dispute for that wallet.
+  </Step>
+</Steps>
+
+The wallet must currently hold YES or NO shares. A wallet with zero shares receives `NOT_A_SHAREHOLDER`. One dispute is allowed per market. Another wallet receives `DUPLICATE_DISPUTE` with no details about the first disputant.
+
+`side` must oppose the oracle. Send `no` to dispute a YES proposal, and `yes` to dispute a NO proposal.
+
+`pk_test_` keys receive sandbox fixtures and a `disclaimer` field. They do not touch mainnet.
+
+Reason and evidence stay off-chain. They are stored for reviewers and are not placed in the transaction.

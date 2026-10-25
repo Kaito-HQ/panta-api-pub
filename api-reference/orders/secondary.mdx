@@ -1,0 +1,30 @@
+---
+title: Secondary market
+description: List shares, rest a bid, take an open order, or cancel your own order after a market graduates.
+---
+
+USDC markets only, after graduation. Amounts are decimal strings. `price` is USDC per share and must be greater than 0 and less than 1. `shares` uses the same 6-decimal share units as positions.
+
+The API builds unsigned instructions. The wallet signs. You broadcast on your RPC. Account addresses are derived by the API.
+
+<Steps>
+  <Step title="Read the book">
+    [`GET /secondary/listings/`](/api-reference/orders/secondary-listings) — open bids and asks for one market.
+  </Step>
+  <Step title="Rest an order">
+    [`POST /secondary/list/`](/api-reference/orders/secondary-list) sells shares the wallet already holds. [`POST /secondary/bid/`](/api-reference/orders/secondary-bid) rests a buy and locks USDC. A bid does not require shares.
+  </Step>
+  <Step title="Take an order">
+    [`POST /secondary/fill/`](/api-reference/orders/secondary-fill) buys an ask or sells into a bid. The listing must be next in price-time order.
+  </Step>
+  <Step title="Cancel">
+    [`POST /secondary/cancel/`](/api-reference/orders/secondary-cancel) releases the caller's own unfilled remainder.
+  </Step>
+  <Step title="Report a fill">
+    After a fill confirms, [`POST /trades/`](/api-reference/trades/report) with `quoteId` set to the fill `orderId` (`sec_…`) and `kind` `secondary`. Listing and cancel transactions are not volume.
+  </Step>
+</Steps>
+
+List, bid, fill, and cancel use the **build** rate-limit family. The book read uses the **read** family.
+
+A fill may be smaller than the listing. USDC that stays locked on an unfilled remainder is not volume. The stored amount is the USDC notional that matched the other side.

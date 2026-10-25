@@ -105,7 +105,8 @@
               "api-reference/markets/get",
               "api-reference/markets/trades",
               "api-reference/markets/categories",
-              "api-reference/markets/wallet-trades"
+              "api-reference/markets/wallet-trades",
+              "api-reference/markets/resolution-summary"
             ]
           },
           {
@@ -126,6 +127,26 @@
               "api-reference/orders/build",
               "api-reference/orders/submit",
               "api-reference/orders/verify"
+            ]
+          },
+          {
+            "group": "Secondary market",
+            "pages": [
+              "api-reference/orders/secondary",
+              "api-reference/orders/secondary-listings",
+              "api-reference/orders/secondary-list",
+              "api-reference/orders/secondary-bid",
+              "api-reference/orders/secondary-fill",
+              "api-reference/orders/secondary-cancel"
+            ]
+          },
+          {
+            "group": "Disputes",
+            "pages": [
+              "api-reference/disputes/overview",
+              "api-reference/disputes/build",
+              "api-reference/disputes/submit",
+              "api-reference/disputes/status"
             ]
           },
           {

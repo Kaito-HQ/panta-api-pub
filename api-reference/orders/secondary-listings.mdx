@@ -1,0 +1,69 @@
+---
+title: Order book
+description: List open bids and asks for one graduated market.
+api: GET /secondary/listings/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Returns open bids and asks for one graduated market. Filled orders are omitted. An empty `items` array means the market is in secondary and has no open orders.
+
+Results are ordered by side (`yes`, then `no`), intent (`buy`, then `sell`), price, then `listingId`.
+
+<ParamField query="marketId" type="string" required>
+  Event / market address.
+</ParamField>
+<ParamField query="side" type="string">
+  `yes` or `no`. Omit to return both.
+</ParamField>
+<ParamField query="intent" type="string">
+  `buy` or `sell`. Omit to return both.
+</ParamField>
+<ParamField query="limit" type="integer" default="100">
+  Page size, 1 to 100.
+</ParamField>
+<ParamField query="cursor" type="string">
+  `nextCursor` from the previous page. An invalid cursor is `INVALID_MARKET_PARAMS`.
+</ParamField>
+
+<ResponseField name="items" type="array">
+  Open orders. Each item has `listingId`, `wallet`, `side`, `intent` (`buy` or `sell`), `price`, `shares` (remaining), `originalShares`, and `filledShares`.
+</ResponseField>
+<ResponseField name="nextCursor" type="string">
+  Present when another page exists. Pass it back as `cursor`.
+</ResponseField>
+
+`listingId` is the id to pass to [fill](/api-reference/orders/secondary-fill) or [cancel](/api-reference/orders/secondary-cancel).
+
+Errors: `INVALID_MARKET_PARAMS` · `MARKET_NOT_FOUND` · `MARKET_NOT_IN_SECONDARY` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl "https://live-api.panta.market/api/v1/secondary/listings/?marketId=EventPda11111111111111111111111111111&side=yes&intent=sell&limit=100" \
+  -H "X-Api-Key: pk_test_…"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "marketId": "EventPda11111111111111111111111111111",
+  "items": [
+    {
+      "listingId": "Listing1111111111111111111111111111111",
+      "wallet": "Seller11111111111111111111111111111111",
+      "side": "yes",
+      "intent": "sell",
+      "price": "0.42",
+      "shares": "10.00",
+      "originalShares": "10.00",
+      "filledShares": "0.00"
+    }
+  ],
+  "nextCursor": null
+}
+```
+</ResponseExample>

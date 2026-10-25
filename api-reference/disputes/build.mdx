@@ -1,0 +1,89 @@
+---
+title: Build dispute
+description: Check the dispute window and return an unsigned transaction that files the dispute and pays the USDC bond.
+api: POST /markets/{marketId}/dispute/build/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+`marketId` is the event address. The market must have ended, the oracle must have proposed, and the one-hour window after that response must still be open. The market must not already be resolved or cancelled.
+
+<ParamField path="marketId" type="string" required>
+  Event / market address (base58).
+</ParamField>
+<ParamField body="wallet" type="string" required>
+  Disputer (base58). Must hold shares. Signs and pays fees.
+</ParamField>
+<ParamField body="reason" type="string" required>
+  1–2000 characters. Stored for reviewers. Not placed on-chain.
+</ParamField>
+<ParamField body="evidence" type="string[]" required>
+  1–5 `http` or `https` URLs.
+</ParamField>
+<ParamField body="side" type="string" required>
+  `yes` or `no`, any case. Must oppose the oracle.
+</ParamField>
+
+<ResponseField name="disputeId" type="string">
+  Send this with the signature on [submit](/api-reference/disputes/submit). Reused if the same account and wallet call build again.
+</ResponseField>
+<ResponseField name="instructions" type="array">
+  Ordered instructions. Compile them in this order. The dispute instruction also collects the USDC bond.
+</ResponseField>
+<ResponseField name="derived" type="object">
+  Server-derived accounts (`reviewRequest`, token accounts). Do not rebuild the transaction from these.
+</ResponseField>
+<ResponseField name="recentBlockhash" type="string">
+  Blockhash for the versioned transaction. Expires in about 60–90 seconds.
+</ResponseField>
+<ResponseField name="lastValidBlockHeight" type="number">
+  Pass this to `confirmTransaction`. Call build again if the user signs too late.
+</ResponseField>
+
+If this wallet already has a verified dispute, the `200` body is the [status](/api-reference/disputes/status) object and `instructions` is absent. Do not sign again.
+
+`DISPUTE_WINDOW_CLOSED` means the market has not ended, the oracle has not proposed, the market is already resolved or cancelled, or the one-hour window after the oracle response has closed.
+
+`INTERNAL_ERROR` with HTTP 503 means Balr, the chain RPC, or another dependency failed. Retry the same request.
+
+Errors: `UNAUTHORIZED` · `MARKET_NOT_FOUND` · `DISPUTE_WINDOW_CLOSED` · `NOT_A_SHAREHOLDER` · `DUPLICATE_DISPUTE` · `INVALID_MARKET_PARAMS` · `INTERNAL_ERROR` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://live-api.panta.market/api/v1/markets/EventPda11111111111111111111111111111/dispute/build/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Disputer1111111111111111111111111111111",
+    "reason": "Resolution sources show the event did not happen.",
+    "evidence": [
+      "https://source1.example.com/report",
+      "https://source2.example.com/article"
+    ],
+    "side": "no"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "disputeId": "ds_abc123",
+  "marketId": "EventPda11111111111111111111111111111",
+  "wallet": "Disputer1111111111111111111111111111111",
+  "side": "no",
+  "instructions": [],
+  "derived": {
+    "reviewRequest": "…",
+    "disputerTokenAccount": "…",
+    "reviewRequestTokenAccount": "…"
+  },
+  "recentBlockhash": "…",
+  "lastValidBlockHeight": 312456789,
+  "blockhashExpiryHintSec": 60
+}
+```
+</ResponseExample>

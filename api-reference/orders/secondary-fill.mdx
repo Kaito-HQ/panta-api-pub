@@ -1,0 +1,102 @@
+---
+title: Fill an order
+description: Build an unsigned transaction that takes one open bid or ask.
+api: POST /secondary/fill/
+authMethod: "none"
+---
+
+<ParamField header="X-Api-Key" type="string" required>
+  API key (`pk_test_…` or `pk_live_…`). Or use `Authorization: Bearer <access>` instead — see [Authentication](/guides/authentication).
+</ParamField>
+
+Takes one open order. The listing's `intent` decides which way:
+
+- `sell`: the caller buys those shares and must hold `maxCostUsdc`. A remainder that does not match rests as a new bid (`orderAccount`) and locks the unused USDC. Response `intent` is `buy`.
+- `buy`: the caller sells shares into that bid and must hold the shares. The bid already locked the USDC. `proceedsUsdc` is the share notional. A remainder that does not match rests as a new ask (`orderAccount`). Response `intent` is `sell`.
+
+Omit `shares` to request the full remainder. A smaller value requests a smaller size. The program matches the best price first, then the oldest order at that price. This route accepts the listing only when it is that order. A cheaper ask, a higher bid, or an older order at the same price returns `LISTING_NOT_NEXT`.
+
+`feeUsdc` is an estimate and is not added to the buyer's balance check. The matched amount is known after the transaction confirms.
+
+After confirmation, report it with [`POST /trades/`](/api-reference/trades/report). `quoteId` must be this response's `orderId`. A report without that id is rejected. The reported amount is the matched notional only.
+
+<ParamField body="wallet" type="string" required>
+  Wallet taking the order.
+</ParamField>
+<ParamField body="marketId" type="string" required>
+  Must be the order's market.
+</ParamField>
+<ParamField body="listingId" type="string" required>
+  Open bid or ask from [`GET /secondary/listings/`](/api-reference/orders/secondary-listings).
+</ParamField>
+<ParamField body="shares" type="string">
+  Size to take. Defaults to the order's remaining shares.
+</ParamField>
+<ParamField body="userId" type="string">
+  Attribution id.
+</ParamField>
+
+<ResponseField name="listingId" type="string">
+  The order this request takes.
+</ResponseField>
+<ResponseField name="orderAccount" type="string">
+  The caller's new order. Cancel it if a remainder should not rest.
+</ResponseField>
+<ResponseField name="intent" type="string">
+  `buy` when taking an ask. `sell` when taking a bid.
+</ResponseField>
+<ResponseField name="maxCostUsdc" type="string">
+  Present when `intent` is `buy`. Share cost the buyer must hold. The fee is not included.
+</ResponseField>
+<ResponseField name="proceedsUsdc" type="string">
+  Present when `intent` is `sell`. Share notional of the request.
+</ResponseField>
+<ResponseField name="feeUsdc" type="string">
+  Configured fee estimate.
+</ResponseField>
+<ResponseField name="orderId" type="string">
+  `sec_…` id. Pass it as `quoteId` on [`POST /trades/`](/api-reference/trades/report).
+</ResponseField>
+
+Filling your own order returns `FORBIDDEN`.
+
+Errors: `INVALID_MARKET_PARAMS` · `MARKET_NOT_FOUND` · `MARKET_NOT_IN_SECONDARY` · `ORDER_NOT_FOUND` · `ORDER_NOT_ACTIVE` · `LISTING_NOT_NEXT` · `SHARES_EXCEED_LISTING` · `INSUFFICIENT_USDC` · `INSUFFICIENT_SHARES` · `FORBIDDEN` · `RATE_LIMITED`.
+
+<RequestExample>
+```bash cURL
+curl -X POST https://live-api.panta.market/api/v1/secondary/fill/ \
+  -H "X-Api-Key: pk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "wallet": "Buyer111111111111111111111111111111111",
+    "marketId": "EventPda11111111111111111111111111111",
+    "listingId": "Listing1111111111111111111111111111111",
+    "shares": "4.00",
+    "userId": "usr_acme"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "orderId": "sec_…",
+  "wallet": "Buyer111111111111111111111111111111111",
+  "marketId": "EventPda11111111111111111111111111111",
+  "side": "yes",
+  "price": "0.42",
+  "shares": "4.00",
+  "listingId": "Listing1111111111111111111111111111111",
+  "intent": "buy",
+  "maxCostUsdc": "1.68",
+  "feeUsdc": "0.02",
+  "orderAccount": "RemainderBid111111111111111111111111111",
+  "status": "built",
+  "instructions": [],
+  "recentBlockhash": "…",
+  "lastValidBlockHeight": 123,
+  "expiresAt": "2026-10-15T12:00:00Z",
+  "blockhashExpiryHintSec": 60
+}
+```
+</ResponseExample>
